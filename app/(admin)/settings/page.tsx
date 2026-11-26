@@ -64,7 +64,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       <form action={saveSettings} className="card form" id="templates">
         <input type="hidden" name="_section" value="templates" />
         <input type="hidden" name="_checkboxes" value="followup_enabled" />
-        <h3>Email &amp; postcard wording <Saved on={saved === "templates"} /></h3>
+        <h3>Email, call script, text &amp; postcard wording <Saved on={saved === "templates"} /></h3>
         <p className="muted small">
           Use these placeholders and they&apos;ll be filled in for each business:{" "}
           {PLACEHOLDERS.map(([k, d]) => (
@@ -79,6 +79,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
             followup_subject: s.followup_subject,
             followup_body: s.followup_body,
             postcard_message: s.postcard_message,
+            call_script: s.call_script,
+            sms_message: s.sms_message,
           }}
           settings={{ my_name: s.my_name, my_phone: s.my_phone, my_area: s.my_area, site_price: s.site_price, hosting_price: s.hosting_price }}
           followupEnabled={s.followup_enabled === "1"}
@@ -111,11 +113,14 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
       <form action={saveSettings} className="card form" id="sending">
         <input type="hidden" name="_section" value="sending" />
-        <input type="hidden" name="_checkboxes" value="live_sending,postcards_enabled" />
+        <input type="hidden" name="_checkboxes" value="live_sending" />
         <h3>Sending <Saved on={saved === "sending"} /></h3>
-        <label className="row gap check">
-          <input type="checkbox" name="postcards_enabled" defaultChecked={s.postcards_enabled === "1"} />
-          Send a postcard when no email is found
+        <label>How to reach businesses
+          <select name="outreach_mode" defaultValue={s.outreach_mode}>
+            <option value="call">Email if we found one, otherwise put them on my call list</option>
+            <option value="call_all">Put everyone on my call list (no emails)</option>
+            <option value="postcard">Email if we found one, otherwise mail a postcard</option>
+          </select>
         </label>
         <label className="row gap check">
           <input type="checkbox" name="live_sending" defaultChecked={s.live_sending === "1"} />

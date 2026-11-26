@@ -75,7 +75,7 @@ export default async function Tracker({ searchParams }: { searchParams: Promise<
                 </td>
                 <td>{b.city}</td>
                 <td>
-                  {b.channel === "email" ? "✉️" : b.channel === "postcard" ? "📮" : ""} {fmtDate(b.contacted_at)}
+                  {b.channel === "email" ? "✉️" : b.channel === "postcard" ? "📮" : b.channel === "call" ? "📞" : ""} {fmtDate(b.contacted_at)}
                   {b.followups_sent ? <div className="muted small">+ follow-up</div> : null}
                 </td>
                 <td>

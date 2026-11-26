@@ -6,8 +6,10 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const s = await getSettings();
-  const c = await one<{ review: number; replies: number }>(
-    "SELECT (SELECT count(*) FROM businesses WHERE status IN ('new','approved')) AS review, (SELECT count(*) FROM businesses WHERE needs_response=1) AS replies",
+  const c = await one<{ review: number; replies: number; calls: number }>(
+    `SELECT (SELECT count(*) FROM businesses WHERE status IN ('new','approved')) AS review,
+      (SELECT count(*) FROM businesses WHERE needs_response=1) AS replies,
+      (SELECT count(*) FROM businesses WHERE status='to_call' AND (follow_up_at IS NULL OR follow_up_at <= date('now'))) AS calls`,
   );
   return (
     <div className="admin">
@@ -16,6 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <nav>
           <Link href="/">Dashboard{c?.replies ? <span className="pill red">{c.replies}</span> : null}</Link>
           <Link href="/review">Review{c?.review ? <span className="pill">{c.review}</span> : null}</Link>
+          <Link href="/calls">Calls{c?.calls ? <span className="pill">{c.calls}</span> : null}</Link>
           <Link href="/tracker">Tracker</Link>
           <Link href="/settings">Settings</Link>
         </nav>

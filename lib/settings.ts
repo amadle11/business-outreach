@@ -44,6 +44,18 @@ If you like it, I'll make it yours. I also build custom tools that automate the 
 Call or text me: {{my_phone}}
 Email: {{my_email}}`;
 
+export const DEFAULT_CALL_SCRIPT = `Hi, is this the owner? My name's {{my_name}}, I'm a local software developer here in {{my_area}}.
+
+I was looking up businesses in {{town}} and noticed {{business_name}} doesn't have a website, so I went ahead and built you a free sample. No strings attached.
+
+Can I text you the link so you can take a look?
+
+(If yes: send the text, then:) If you like it, I can make it yours. Sites like that are usually around \${{site_price}} one-time. I also build custom tools to automate the manual stuff, like booking or order forms. No pressure at all, just text or call me back at this number.`;
+
+export const DEFAULT_SMS = `Hi, it's {{my_name}}, the local web developer who just called. Here's the free sample site I made for {{business_name}}: {{preview_url}}
+
+No strings attached. Call or text me anytime if you'd like it!`;
+
 export const DEFAULT_CATEGORIES = [
   "restaurant",
   "pizza",
@@ -87,7 +99,10 @@ export const DEFAULTS: Record<string, string> = {
   categories: DEFAULT_CATEGORIES.join("\n"),
   weekly_lead_cap: "30",
   live_sending: "0",
-  postcards_enabled: "1",
+  // What to do for leads with no email: "call" (your call list) or "postcard". "call_all" skips email entirely.
+  outreach_mode: "call",
+  call_script: DEFAULT_CALL_SCRIPT,
+  sms_message: DEFAULT_SMS,
   email_subject: DEFAULT_EMAIL_SUBJECT,
   email_body: DEFAULT_EMAIL_BODY,
   followup_enabled: "1",

@@ -19,7 +19,7 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
   const reviews = parseJson<Review[]>(b.reviews, []);
   const hours = parseJson<string[]>(b.hours, []);
   const socials = parseJson<string[]>(b.socials, []);
-  const ch = channelFor(b, s.postcards_enabled === "1");
+  const ch = channelFor(b, s.outreach_mode);
   const email = composeEmail(b, s);
 
   return (
@@ -64,7 +64,7 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
             </div>
             <label>Notes <textarea name="notes" rows={3} defaultValue={b.notes ?? ""} /></label>
             <button className="btn primary">Save</button>
-            <p className="muted small">Will be contacted by: <b>{ch}</b> {ch === "none" && "(add an email or a full street address)"}</p>
+            <p className="muted small">Will be contacted by: <b>{ch}</b> {ch === "none" && "(add an email, phone or full street address)"}</p>
           </form>
 
           <form action={logCall} className="card form">

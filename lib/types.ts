@@ -68,6 +68,7 @@ export const STATUSES = [
   "new",
   "approved",
   "removed",
+  "to_call",
   "contacted",
   "replied",
   "talking",
@@ -79,6 +80,7 @@ export const STATUSES = [
 export const STATUS_LABEL: Record<string, string> = {
   new: "Needs review",
   approved: "Approved, ready to send",
+  to_call: "To call",
   removed: "Removed",
   contacted: "Contacted",
   replied: "Replied",

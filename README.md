@@ -6,7 +6,7 @@ A small, mostly hands-off tool for finding local NJ businesses with no website, 
 
 1. **Monday 8 AM (Eastern):** searches Google Places for businesses in your towns and categories, keeps only the ones with no real website (a Facebook, Instagram, Yelp or ordering-app page doesn't count), and builds a one-page sample site for each. You get an email: "N new leads ready for review".
 2. **You** open **Review**, look over everything we know about each business (type, rating, reviews, photos, hours, address, phone, email, socials, Maps link, the sample site itself), approve or remove in bulk, and press **Send**.
-3. Leads with an email get your email from your Gmail. Leads without one get a 6×9 postcard through Lob with a picture of their site, a QR code that's unique to them, and your phone and email. No return address is printed.
+3. Leads with an email get your email from your Gmail. Leads without one go on your **Calls** list (default): tap to call, follow the script, then tap **Text sample link** to send them their site from your phone, and tap how it went. Or switch Settings to mail a 6×9 Lob postcard instead (picture of their site, a unique QR code, your phone and email, no return address).
 4. **Every day 9 AM (Eastern):** checks your Gmail for replies and flags the ones that need an answer, notices when you've answered, catches bounces, and sends one polite follow-up email to people who haven't replied after 5 days (you can turn this off).
 5. **Tracker** shows every business contacted, what was sent, site views, QR scans, replies, follow-ups due, calls you've logged, and won or lost.
 
@@ -16,6 +16,7 @@ A small, mostly hands-off tool for finding local NJ businesses with no website, 
 | --- | --- |
 | Dashboard | Replies waiting on you, follow-ups and call reminders due, who looked at their site, recent activity, setup checklist |
 | Review | This week's leads with all their info, bulk approve/remove, one Send button |
+| Calls | Who to call today, with tap-to-call, your script, a one-tap text with their sample link, and outcome buttons |
 | Tracker | Everyone you've contacted, filterable by status |
 | Lead page | Edit details, change the site design, log a call, see the email or postcard they got, full timeline |
 | Settings | Your info, the email/follow-up/postcard wording (with live preview), towns and categories, test vs live mode |
@@ -45,7 +46,7 @@ You need five accounts. All have free tiers except Lob postcards (pay per card).
 1. Your Google account needs 2-Step Verification turned on.
 2. Go to myaccount.google.com/apppasswords, create one called "Outreach", and copy the 16-character password.
 
-### 4. Lob (postcards)
+### 4. Lob (postcards, optional; skip if you're calling instead)
 1. Sign up at lob.com. Use the **test** API key (`test_...`) first: cards are created and you can see proofs in Lob's dashboard, but nothing is mailed.
 2. When you're ready, add a payment method and swap in the **live** key (`live_...`). A 6×9 postcard is roughly $1 including postage.
 

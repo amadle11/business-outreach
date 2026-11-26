@@ -11,7 +11,6 @@ export default async function ReviewPage() {
   const rows = await all<Business>(
     "SELECT * FROM businesses WHERE status IN ('new','approved') ORDER BY status DESC, rating IS NULL, review_count DESC, id",
   );
-  const postcards = s.postcards_enabled === "1";
   const leads: ReviewLead[] = rows.map((b) => ({
     id: b.id,
     name: b.name,
@@ -32,7 +31,7 @@ export default async function ReviewPage() {
     mapsUrl: b.maps_url,
     query: b.search_query,
     slug: b.slug,
-    channel: channelFor(b, postcards),
+    channel: channelFor(b, s.outreach_mode),
     found: b.created_at,
   }));
   const probs = setupProblems(s);

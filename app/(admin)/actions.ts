@@ -115,6 +115,35 @@ export async function logCall(formData: FormData) {
   refresh();
 }
 
+/** Quick outcome buttons on the call list. */
+export async function callOutcome(id: number, outcome: "no_answer" | "voicemail" | "texted" | "interested" | "not_interested" | "bad_number") {
+  const plusDays = (d: number) => new Date(Date.now() + d * 86400000).toISOString().slice(0, 10);
+  const label = {
+    no_answer: "No answer",
+    voicemail: "Left voicemail",
+    texted: "Talked, texted them the sample link",
+    interested: "Talked, they're interested",
+    not_interested: "Not interested",
+    bad_number: "Wrong number / closed",
+  }[outcome];
+  await logEvent(id, "call", label);
+  if (outcome === "no_answer" || outcome === "voicemail") {
+    await run("UPDATE businesses SET follow_up_at=?, updated_at=datetime('now') WHERE id=?", [plusDays(outcome === "no_answer" ? 2 : 3), id]);
+  } else if (outcome === "texted" || outcome === "interested") {
+    await run(
+      "UPDATE businesses SET status=?, channel='call', contacted_at=coalesce(contacted_at, datetime('now')), follow_up_at=?, updated_at=datetime('now') WHERE id=?",
+      [outcome === "interested" ? "talking" : "contacted", plusDays(3), id],
+    );
+  } else if (outcome === "not_interested") {
+    await run("UPDATE businesses SET follow_up_at=NULL WHERE id=?", [id]);
+    await setStatus(id, "lost");
+  } else {
+    await run("UPDATE businesses SET follow_up_at=NULL WHERE id=?", [id]);
+    await setStatus(id, "removed", "Wrong number or closed");
+  }
+  refresh();
+}
+
 export async function markHandled(id: number) {
   await run("UPDATE businesses SET needs_response=0 WHERE id=?", [id]);
   await logEvent(id, "handled", "Marked as responded");

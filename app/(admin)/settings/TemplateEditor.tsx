@@ -8,6 +8,8 @@ type T = {
   followup_subject: string;
   followup_body: string;
   postcard_message: string;
+  call_script: string;
+  sms_message: string;
 };
 
 const SAMPLE = { business_name: "Bay Avenue Barbers", town: "Somers Point", category: "barber shop", preview_url: "https://your-site.netlify.app/p/bay-avenue-barbers-x1y2z" };
@@ -28,7 +30,7 @@ export default function TemplateEditor({
   followupDays: string;
 }) {
   const [t, setT] = useState<T>(initial);
-  const [tab, setTab] = useState<"email" | "followup" | "postcard">("email");
+  const [tab, setTab] = useState<"email" | "followup" | "call" | "sms" | "postcard">("email");
   const v = { ...SAMPLE, ...settings };
   const set = (k: keyof T) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setT({ ...t, [k]: e.target.value });
 
@@ -37,6 +39,8 @@ export default function TemplateEditor({
       <div className="row gap tabs">
         <button type="button" className={tab === "email" ? "tab on" : "tab"} onClick={() => setTab("email")}>First email</button>
         <button type="button" className={tab === "followup" ? "tab on" : "tab"} onClick={() => setTab("followup")}>Follow-up email</button>
+        <button type="button" className={tab === "call" ? "tab on" : "tab"} onClick={() => setTab("call")}>Call script</button>
+        <button type="button" className={tab === "sms" ? "tab on" : "tab"} onClick={() => setTab("sms")}>Text message</button>
         <button type="button" className={tab === "postcard" ? "tab on" : "tab"} onClick={() => setTab("postcard")}>Postcard back</button>
       </div>
       <div className="grid2">
@@ -55,6 +59,12 @@ export default function TemplateEditor({
             <label>Subject <input name="followup_subject" value={t.followup_subject} onChange={set("followup_subject")} /></label>
             <label>Body <textarea name="followup_body" rows={12} value={t.followup_body} onChange={set("followup_body")} /></label>
           </div>
+          <div style={{ display: tab === "call" ? "block" : "none" }} className="stack">
+            <label>What to say on the phone (only you see this) <textarea name="call_script" rows={14} value={t.call_script} onChange={set("call_script")} /></label>
+          </div>
+          <div style={{ display: tab === "sms" ? "block" : "none" }} className="stack">
+            <label>Text you send with their sample link <textarea name="sms_message" rows={8} value={t.sms_message} onChange={set("sms_message")} /></label>
+          </div>
           <div style={{ display: tab === "postcard" ? "block" : "none" }} className="stack">
             <label>
               Message (keep it short, it has to fit on half a 6×9 card)
@@ -65,12 +75,12 @@ export default function TemplateEditor({
         </div>
         <div className="preview-mail">
           <div className="muted small">Preview for a sample business</div>
-          {tab !== "postcard" && (
+          {(tab === "email" || tab === "followup") && (
             <p><b>Subject:</b> {fill(tab === "email" ? t.email_subject : t.followup_subject, v)}</p>
           )}
           <pre className="emailpre">
-            {fill(tab === "email" ? t.email_body : tab === "followup" ? t.followup_body : t.postcard_message, v)}
-            {tab !== "postcard" && `\n\n--\n${settings.my_name} · [your PO box / virtual mailbox]\nNot interested? Reply "no thanks" or unsubscribe here and I won't email again: [link]`}
+            {fill({ email: t.email_body, followup: t.followup_body, call: t.call_script, sms: t.sms_message, postcard: t.postcard_message }[tab], v)}
+            {(tab === "email" || tab === "followup") && `\n\n--\n${settings.my_name} · [your PO box / virtual mailbox]\nNot interested? Reply "no thanks" or unsubscribe here and I won't email again: [link]`}
           </pre>
         </div>
       </div>

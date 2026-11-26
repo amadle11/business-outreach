@@ -112,9 +112,20 @@ export async function suppress(b: Pick<Business, "email" | "place_id">) {
   }
 }
 
-/** Email if we have one, else postcard if we have a mailable address, else none. */
-export function channelFor(b: Business, postcardsEnabled: boolean): "email" | "postcard" | "none" {
-  if (b.email && /.+@.+\..+/.test(b.email)) return "email";
-  if (postcardsEnabled && b.street && b.city && b.state && b.zip) return "postcard";
+export type Channel = "email" | "postcard" | "call" | "none";
+
+/**
+ * How a lead gets reached, based on Settings → outreach mode:
+ *  "call"      email if we have one, otherwise your call list
+ *  "postcard"  email if we have one, otherwise a postcard (or the call list if there's no full address)
+ *  "call_all"  everyone goes on your call list
+ */
+export function channelFor(b: Business, mode: string): Channel {
+  const hasEmail = !!b.email && /.+@.+\..+/.test(b.email);
+  const mailable = !!(b.street && b.city && b.state && b.zip);
+  if (mode !== "call_all" && hasEmail) return "email";
+  if (mode === "postcard" && mailable) return "postcard";
+  if (b.phone) return "call";
+  if (mailable) return "postcard";
   return "none";
 }

@@ -9,6 +9,7 @@ import type { Business } from "./types";
 export type SendSummary = {
   emailed: number;
   postcards: number;
+  calls: number;
   tests: number;
   skipped: { name: string; reason: string }[];
   errors: { name: string; error: string }[];
@@ -25,7 +26,7 @@ export async function sendApproved(ids?: number[]): Promise<SendSummary> {
   const problems = setupProblems(s);
   let rows = await all<Business>("SELECT * FROM businesses WHERE status = 'approved' ORDER BY id");
   if (ids) rows = rows.filter((r) => ids.includes(r.id));
-  const out: SendSummary = { emailed: 0, postcards: 0, tests: 0, skipped: [], errors: [] };
+  const out: SendSummary = { emailed: 0, postcards: 0, calls: 0, tests: 0, skipped: [], errors: [] };
 
   for (const b of rows) {
     if (await isSuppressed(b)) {
@@ -33,9 +34,19 @@ export async function sendApproved(ids?: number[]): Promise<SendSummary> {
       out.skipped.push({ name: b.name, reason: "opted out earlier" });
       continue;
     }
-    const ch = channelFor(b, s.postcards_enabled === "1");
+    const ch = channelFor(b, s.outreach_mode);
     if (ch === "none") {
-      out.skipped.push({ name: b.name, reason: "no email and no full mailing address" });
+      out.skipped.push({ name: b.name, reason: "no email, phone or mailing address" });
+      continue;
+    }
+    if (ch === "call") {
+      // Nothing is sent: the business moves onto your call list.
+      await run(
+        "UPDATE businesses SET status='to_call', channel='call', follow_up_at=NULL, updated_at=datetime('now') WHERE id=?",
+        [b.id],
+      );
+      await logEvent(b.id, "status", "Added to your call list");
+      out.calls++;
       continue;
     }
     try {
@@ -108,7 +119,7 @@ export async function sendApproved(ids?: number[]): Promise<SendSummary> {
   await logEvent(
     null,
     "send_run",
-    `${live ? "Live" : "Test"} send: ${out.emailed} emails, ${out.postcards} postcards, ${out.tests} test sends, ${out.skipped.length} skipped, ${out.errors.length} errors`,
+    `${live ? "Live" : "Test"} send: ${out.emailed} emails, ${out.postcards} postcards, ${out.calls} to call list, ${out.tests} test sends, ${out.skipped.length} skipped, ${out.errors.length} errors`,
     out,
   );
   return out;

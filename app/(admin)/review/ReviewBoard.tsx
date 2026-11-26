@@ -26,11 +26,11 @@ export type ReviewLead = {
   mapsUrl: string | null;
   query: string | null;
   slug: string;
-  channel: "email" | "postcard" | "none";
+  channel: "email" | "postcard" | "call" | "none";
   found: string;
 };
 
-const CH_LABEL = { email: "✉️ Email", postcard: "📮 Postcard", none: "⛔ Can't send" };
+const CH_LABEL = { email: "✉️ Email", postcard: "📮 Postcard", call: "📞 Call list", none: "⛔ Can't reach" };
 
 export default function ReviewBoard({
   leads,
@@ -56,6 +56,7 @@ export default function ReviewBoard({
     () => ({
       email: approved.filter((l) => l.channel === "email").length,
       postcard: approved.filter((l) => l.channel === "postcard").length,
+      call: approved.filter((l) => l.channel === "call").length,
       none: approved.filter((l) => l.channel === "none").length,
     }),
     [approved],
@@ -76,14 +77,14 @@ export default function ReviewBoard({
       setSel(new Set());
     });
 
-  const sendCount = counts.email + counts.postcard;
+  const sendCount = counts.email + counts.postcard + counts.call;
 
   return (
     <div className="stack">
       <div className="card sendbar">
         <div>
           <h3 style={{ margin: 0 }}>
-            {approved.length} approved: {counts.email} by email, {counts.postcard} by postcard
+            {approved.length} approved: {counts.email} by email, {counts.call} to your call list, {counts.postcard} by postcard
             {counts.none > 0 && `, ${counts.none} can't be reached (add an email or address)`}
           </h3>
           <p className="muted small" style={{ margin: "4px 0 0" }}>
@@ -107,12 +108,13 @@ export default function ReviewBoard({
                 start(async () => {
                   // Send 3 at a time so each request stays short.
                   const ids = await approvedIds();
-                  const total: SendSummary = { emailed: 0, postcards: 0, tests: 0, skipped: [], errors: [] };
+                  const total: SendSummary = { emailed: 0, postcards: 0, calls: 0, tests: 0, skipped: [], errors: [] };
                   for (let i = 0; i < ids.length; i += 3) {
                     setProgress(`Sending ${Math.min(i + 3, ids.length)} of ${ids.length}…`);
                     const r = await sendNow(ids.slice(i, i + 3));
                     total.emailed += r.emailed;
                     total.postcards += r.postcards;
+                    total.calls += r.calls;
                     total.tests += r.tests;
                     total.skipped.push(...r.skipped);
                     total.errors.push(...r.errors);
@@ -135,7 +137,7 @@ export default function ReviewBoard({
       {result && (
         <div className="card ok">
           <b>
-            Done: {result.emailed} emailed, {result.postcards} postcards, {result.tests} test sends.
+            Done: {result.emailed} emailed, {result.calls} added to your <Link href="/calls">call list</Link>, {result.postcards} postcards, {result.tests} test sends.
           </b>
           {result.skipped.map((x) => (
             <div key={x.name} className="small">Skipped {x.name}: {x.reason}</div>
@@ -258,7 +260,7 @@ function LeadCard({
               <input
                 className="inline"
                 value={email}
-                placeholder="not found, paste one to email instead of mailing"
+                placeholder="not found, paste one to email them"
                 onChange={(e) => setEmail(e.target.value)}
               />
               {dirty && (
