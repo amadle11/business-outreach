@@ -62,7 +62,7 @@ export default function PreviewSite({ b, s, banner = true }: { b: Business; s: S
 .ps .contact{background:var(--d);color:#fff;text-align:center}
 .ps .contact h2{color:#fff}
 .ps footer{padding:28px 6vw;font-size:13px;color:#777;text-align:center}
-@media (max-width:760px){.ps .about,.ps .visit{grid-template-columns:1fr}.ps nav .links a:not(.cta){display:none}.ps .svc{grid-template-columns:1fr}}
+@media (max-width:760px){.ps nav .logo{font-size:17px;line-height:1.2;margin-right:10px}.ps nav .cta{white-space:nowrap;padding:8px 12px;font-size:14px}.ps .about,.ps .visit{grid-template-columns:1fr}.ps nav .links a:not(.cta){display:none}.ps .svc{grid-template-columns:1fr}}
 `}</style>
       {banner && (
         <div className="banner">
