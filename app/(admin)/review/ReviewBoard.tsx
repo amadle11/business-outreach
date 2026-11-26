@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
-import { approveLeads, removeLeads, sendNow, unreviewLeads, updateEmail } from "../actions";
+import { approveLeads, approvedIds, removeLeads, sendNow, unreviewLeads, updateEmail } from "../actions";
 import type { Review } from "@/lib/types";
 import type { SendSummary } from "@/lib/send";
 
@@ -48,6 +48,7 @@ export default function ReviewBoard({
   const [pending, start] = useTransition();
   const [confirming, setConfirming] = useState(false);
   const [result, setResult] = useState<SendSummary | null>(null);
+  const [progress, setProgress] = useState<string | null>(null);
 
   const shown = leads.filter((l) => l.status === tab);
   const approved = leads.filter((l) => l.status === "approved");
@@ -104,12 +105,25 @@ export default function ReviewBoard({
               disabled={pending}
               onClick={() =>
                 start(async () => {
-                  setResult(await sendNow());
+                  // Send 3 at a time so each request stays short.
+                  const ids = await approvedIds();
+                  const total: SendSummary = { emailed: 0, postcards: 0, tests: 0, skipped: [], errors: [] };
+                  for (let i = 0; i < ids.length; i += 3) {
+                    setProgress(`Sending ${Math.min(i + 3, ids.length)} of ${ids.length}…`);
+                    const r = await sendNow(ids.slice(i, i + 3));
+                    total.emailed += r.emailed;
+                    total.postcards += r.postcards;
+                    total.tests += r.tests;
+                    total.skipped.push(...r.skipped);
+                    total.errors.push(...r.errors);
+                  }
+                  setProgress(null);
+                  setResult(total);
                   setConfirming(false);
                 })
               }
             >
-              {pending ? "Sending…" : `Yes, send ${sendCount}${live ? " for real" : " (test)"}`}
+              {pending ? progress || "Sending…" : `Yes, send ${sendCount}${live ? " for real" : " (test)"}`}
             </button>
             <button className="btn ghost" onClick={() => setConfirming(false)}>
               Cancel

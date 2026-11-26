@@ -1,0 +1,54 @@
+# Runs the app's scheduled jobs by calling its cron URLs.
+# Needs two repository secrets: APP_URL (e.g. https://your-site.netlify.app) and CRON_SECRET.
+name: Scheduled jobs
+
+on:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 13:00 UTC = 8 AM Eastern (9 AM in summer): find new leads
+    - cron: "0 14 * * *" # Daily 14:00 UTC = 9 AM Eastern: check Gmail, send follow-ups
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Which job to run"
+        type: choice
+        options: [weekly, daily]
+        default: daily
+
+jobs:
+  weekly:
+    if: github.event.schedule == '0 13 * * 1' || inputs.job == 'weekly'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Find leads (in small steps)
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          q="?fresh=1"
+          for i in $(seq 1 60); do
+            out=$(curl -sS --max-time 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/weekly$q")
+            echo "$out"
+            q=""
+            echo "$out" | grep -q '"done":true' && exit 0
+            sleep 2
+          done
+          echo "Stopped after 60 steps"; exit 1
+
+  daily:
+    if: github.event.schedule == '0 14 * * *' || inputs.job == 'daily'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check Gmail and send follow-ups
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sS --max-time 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/daily?part=inbox"; echo
+          for i in $(seq 1 20); do
+            out=$(curl -sS --max-time 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/daily?part=followups")
+            echo "$out"
+            echo "$out" | grep -q '"more":true' || exit 0
+            sleep 2
+          done

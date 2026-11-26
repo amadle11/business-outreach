@@ -1,4 +1,4 @@
-import { getSettings, setupProblems } from "@/lib/settings";
+import { appUrl, getSettings, setupProblems } from "@/lib/settings";
 import { PLACEHOLDERS } from "@/lib/template";
 import { lobMode } from "@/lib/postcard";
 import { gmailConfigured } from "@/lib/mail";
@@ -18,7 +18,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
     ["Gmail (send + reply tracking)", gmailConfigured()],
     [`Lob (postcards, ${lobMode()} key)`, lobMode() !== "none"],
     ["Cron secret (weekly/daily automation)", !!process.env.CRON_SECRET],
-    ["Public app URL", !!process.env.APP_URL && process.env.APP_URL.startsWith("https://")],
+    ["Public app URL", appUrl().startsWith("https://")],
   ] as const;
 
   return (

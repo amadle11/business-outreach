@@ -4,10 +4,10 @@ A small, mostly hands-off tool for finding local NJ businesses with no website, 
 
 **What it does every week, on its own**
 
-1. **Monday 8 AM (ET):** searches Google Places for businesses in your towns and categories, keeps only the ones with no real website (a Facebook, Instagram, Yelp or ordering-app page doesn't count), and builds a one-page sample site for each. You get an email: "N new leads ready for review".
+1. **Monday 8 AM (Eastern):** searches Google Places for businesses in your towns and categories, keeps only the ones with no real website (a Facebook, Instagram, Yelp or ordering-app page doesn't count), and builds a one-page sample site for each. You get an email: "N new leads ready for review".
 2. **You** open **Review**, look over everything we know about each business (type, rating, reviews, photos, hours, address, phone, email, socials, Maps link, the sample site itself), approve or remove in bulk, and press **Send**.
 3. Leads with an email get your email from your Gmail. Leads without one get a 6×9 postcard through Lob with a picture of their site, a QR code that's unique to them, and your phone and email. No return address is printed.
-4. **Every day 9 AM (ET):** checks your Gmail for replies and flags the ones that need an answer, notices when you've answered, catches bounces, and sends one polite follow-up email to people who haven't replied after 5 days (you can turn this off).
+4. **Every day 9 AM (Eastern):** checks your Gmail for replies and flags the ones that need an answer, notices when you've answered, catches bounces, and sends one polite follow-up email to people who haven't replied after 5 days (you can turn this off).
 5. **Tracker** shows every business contacted, what was sent, site views, QR scans, replies, follow-ups due, calls you've logged, and won or lost.
 
 ## Pages
@@ -32,52 +32,57 @@ A small, mostly hands-off tool for finding local NJ businesses with no website, 
 
 You need five accounts. All have free tiers except Lob postcards (pay per card).
 
-### 1. Code on GitHub, hosted on Vercel
-1. Put this folder in a private GitHub repo.
-2. Go to vercel.com, sign in with GitHub, **Add New → Project**, pick the repo, and deploy. (Vercel's free Hobby plan is fine to start. Their terms call Hobby non-commercial, so move to Pro, $20/mo, once this is bringing in money.)
-3. Note your app URL, e.g. `https://outreach-anthony.vercel.app`.
+### 1. Database (Turso, free)
+1. Sign up at turso.tech and create a database (any name, nearest region to the US East coast).
+2. Copy its URL (`libsql://...`) and create an auth token. Keep both for step 5.
 
-### 2. Database (Turso, free)
-1. Sign up at turso.tech, create a database.
-2. Copy its URL (`libsql://...`) and create an auth token.
-
-### 3. Google Places API key (lead search)
+### 2. Google Places API key (lead search)
 1. console.cloud.google.com → create a project → **APIs & Services → Library** → enable **Places API (New)**.
-2. **Credentials → Create credentials → API key**. Restrict it to *Places API (New)*.
-3. Billing must be enabled on the project. At 20–50 leads a week this is a few dozen searches a month, which should stay inside Google's free monthly allowance, but set a budget alert to be safe.
+2. **Credentials → Create credentials → API key**. Edit the key and restrict it to *Places API (New)*.
+3. Billing must be turned on for the project. At 20–50 leads a week this is a few dozen searches a month, which should stay inside Google's free monthly allowance. Set a small budget alert anyway.
 
-### 4. Gmail app password (sending + reply tracking)
+### 3. Gmail app password (sending + reply tracking)
 1. Your Google account needs 2-Step Verification turned on.
-2. Go to myaccount.google.com/apppasswords, create one called "Outreach", copy the 16-character password.
+2. Go to myaccount.google.com/apppasswords, create one called "Outreach", and copy the 16-character password.
 
-### 5. Lob (postcards)
-1. Sign up at lob.com. Start with the **test** API key (`test_...`): cards are created and you can see the proofs in Lob's dashboard, but nothing is mailed.
-2. When ready, add a payment method and swap in the **live** key (`live_...`). A 6×9 postcard costs roughly $1 each including postage.
+### 4. Lob (postcards)
+1. Sign up at lob.com. Use the **test** API key (`test_...`) first: cards are created and you can see proofs in Lob's dashboard, but nothing is mailed.
+2. When you're ready, add a payment method and swap in the **live** key (`live_...`). A 6×9 postcard is roughly $1 including postage.
 
-### 6. Environment variables in Vercel
-Project → Settings → Environment Variables:
+### 5. Host it on Netlify
+1. app.netlify.com → **Add new site → Import an existing project → GitHub** → pick `business-outreach`. Netlify detects Next.js; leave the build settings as they are.
+2. Before (or right after) the first deploy, go to **Site configuration → Environment variables** and add:
 
 | Name | Value |
 | --- | --- |
 | `ADMIN_PASSWORD` | the password you'll log in with |
-| `APP_URL` | your Vercel URL, no trailing slash |
-| `CRON_SECRET` | any long random string (Vercel uses it to call the weekly/daily jobs) |
-| `DATABASE_URL` | Turso URL |
-| `DATABASE_AUTH_TOKEN` | Turso token |
-| `GOOGLE_PLACES_API_KEY` | from step 3 |
+| `CRON_SECRET` | any long random string (used by the scheduled jobs in step 6) |
+| `DATABASE_URL` | Turso URL from step 1 |
+| `DATABASE_AUTH_TOKEN` | Turso token from step 1 |
+| `GOOGLE_PLACES_API_KEY` | from step 2 |
 | `GMAIL_ADDRESS` | your Gmail address |
-| `GMAIL_APP_PASSWORD` | from step 4 |
-| `LOB_API_KEY` | from step 5 |
+| `GMAIL_APP_PASSWORD` | from step 3 |
+| `LOB_API_KEY` | from step 4 |
+| `APP_URL` | optional: only if you add a custom domain. Otherwise Netlify's own URL is used. |
 
-Redeploy after adding them.
+3. **Deploys → Trigger deploy** so the variables take effect. Note your site URL, e.g. `https://outreach-anthony.netlify.app`.
+
+### 6. Turn on the weekly and daily schedule (GitHub Actions)
+Netlify doesn't run scheduled jobs long enough for this, so GitHub runs them and calls your site in small steps.
+1. In the GitHub repo: **Settings → Secrets and variables → Actions → New repository secret**. Add two:
+   - `APP_URL` = your Netlify URL (no trailing slash)
+   - `CRON_SECRET` = the same value you gave Netlify
+2. **Actions** tab → enable workflows if asked. To test right away: **Scheduled jobs → Run workflow**, pick `weekly`.
+
+Note: GitHub pauses scheduled workflows in a *public* repo after 60 days with no commits. Keeping the repo private avoids that.
 
 ### 7. In the app
-1. Log in, go to **Settings**, fill in your phone. Postcards work right away: they carry no return address, only your name, phone, email and the QR code.
-   Email sending stays paused until you add a PO box or virtual mailbox address. The law requires a postal address in the footer of cold emails, and this is the only place it appears. A USPS PO box or an online virtual mailbox both work.
-2. Tweak the email wording if you want.
-3. Dashboard → **Find leads now** to run the first search without waiting for Monday.
-4. Approve a few, press Send in test mode, and check your inbox.
-5. When it looks right, turn on **Live sending**.
+1. Log in, go to **Settings**, and fill in your phone. Postcards work right away: they carry no return address, only your name, phone, email and the QR code.
+2. Email sending stays paused until you add a PO box or virtual mailbox address in Settings. The law requires a postal address in the footer of cold emails, and that footer is the only place it appears.
+3. Tweak the email wording if you want.
+4. Dashboard → **Find leads now** to run the first search without waiting for Monday.
+5. Approve a few, press **Send** in test mode, and check your inbox.
+6. When it looks right, turn on **Live sending** in Settings.
 
 ## Running locally
 
@@ -91,7 +96,7 @@ Locally the database is a file (`local.db`). Postcards need a public `APP_URL` b
 
 ## How it's built
 
-Next.js 15 (App Router, server actions), SQLite via libSQL/Turso, Nodemailer + ImapFlow for Gmail, Lob's REST API for postcards, Vercel Cron for the weekly and daily jobs. Code map:
+Next.js 15 (App Router, server actions), SQLite via libSQL/Turso, Nodemailer + ImapFlow for Gmail, Lob's REST API for postcards, GitHub Actions for the weekly and daily jobs (`.github/workflows/schedule.yml`), hosted on Netlify. Code map:
 
 - `lib/places.ts`: weekly lead search
 - `components/PreviewSite.tsx`, `lib/profiles.ts`: the sample site and its per-industry designs

@@ -74,9 +74,21 @@ function comp(p: PlaceApi, type: string, short = false) {
   return c ? (short ? c.shortText : c.longText) : null;
 }
 
-export type FindResult = { batchId: number; added: number; searched: string[]; skipped: number; errors: string[] };
+export type FindResult = {
+  batchId: number;
+  added: number;
+  totalAdded: number;
+  done: boolean;
+  searched: string[];
+  skipped: number;
+  errors: string[];
+};
 
-export async function findLeads(opts: { cap?: number } = {}): Promise<FindResult> {
+/**
+ * One small step of the weekly search (a few Google searches), so each request stays well inside
+ * hosting time limits. Call repeatedly until `done`. `fresh` starts a new weekly run.
+ */
+export async function findLeadsChunk(opts: { fresh?: boolean; maxSearches?: number; cap?: number } = {}): Promise<FindResult> {
   const key = process.env.GOOGLE_PLACES_API_KEY;
   if (!key) throw new Error("GOOGLE_PLACES_API_KEY is not set");
   const s = await getSettings();
@@ -87,6 +99,16 @@ export async function findLeads(opts: { cap?: number } = {}): Promise<FindResult
   const pairs = towns.flatMap((t) => cats.map((c) => `${c} in ${t}`));
   if (!pairs.length) throw new Error("Add at least one town and one category in Settings");
 
+  let batchId = Number(s.run_batch) || 0;
+  let runAdded = Number(s.run_added) || 0;
+  let runSearches = Number(s.run_searches) || 0;
+  if (opts.fresh || !batchId) {
+    const b = await run("INSERT INTO batches (source) VALUES ('google_places')");
+    batchId = Number(b.lastInsertRowid);
+    runAdded = 0;
+    runSearches = 0;
+  }
+
   const known = new Set(
     (await all<{ place_id: string }>("SELECT place_id FROM businesses WHERE place_id IS NOT NULL")).map(
       (r) => r.place_id,
@@ -94,30 +116,28 @@ export async function findLeads(opts: { cap?: number } = {}): Promise<FindResult
   );
   const suppressed = new Set((await all<{ value: string }>("SELECT value FROM suppression")).map((r) => r.value));
 
-  const b = await run("INSERT INTO batches (source) VALUES ('google_places')");
-  const batchId = Number(b.lastInsertRowid);
-
   let cursor = Number(s.search_cursor) || 0;
   let added = 0;
   let skipped = 0;
   const searched: string[] = [];
   const errors: string[] = [];
+  const maxSearches = opts.maxSearches ?? 3;
 
-  // Walk through town×category pairs, continuing from where last week stopped.
-  for (let i = 0; i < pairs.length && added < cap; i++) {
+  // Walk through town×category pairs, continuing from where the last search stopped.
+  while (searched.length < maxSearches && runSearches < pairs.length && runAdded + added < cap) {
     const query = pairs[cursor % pairs.length];
     cursor++;
+    runSearches++;
     searched.push(query);
     let places: PlaceApi[] = [];
     try {
       places = await searchText(query, key);
     } catch (e) {
       errors.push(String(e));
-      if (errors.length >= 3) break;
-      continue;
+      break;
     }
     for (const p of places) {
-      if (added >= cap) break;
+      if (runAdded + added >= cap) break;
       if (known.has(p.id) || suppressed.has(p.id)) continue;
       known.add(p.id);
       if (p.businessStatus && p.businessStatus !== "OPERATIONAL") continue;
@@ -175,9 +195,14 @@ export async function findLeads(opts: { cap?: number } = {}): Promise<FindResult
     }
   }
 
+  runAdded += added;
+  const done = errors.length > 0 || runAdded >= cap || runSearches >= pairs.length;
   await setSetting("search_cursor", String(cursor % pairs.length));
-  const summary = `${added} new leads from ${searched.length} searches (${skipped} skipped because they already have a website)`;
-  await run("UPDATE batches SET found = ?, summary = ? WHERE id = ?", [added, summary, batchId]);
-  await logEvent(null, "lead_search", summary, { searched, errors });
-  return { batchId, added, searched, skipped, errors };
+  await setSetting("run_batch", done ? "" : String(batchId));
+  await setSetting("run_added", String(runAdded));
+  await setSetting("run_searches", String(runSearches));
+  const summary = `${runAdded} new leads from ${runSearches} searches`;
+  await run("UPDATE batches SET found = ?, summary = ? WHERE id = ?", [runAdded, summary, batchId]);
+  if (done) await logEvent(null, "lead_search", summary + (errors.length ? ` (error: ${errors[0]})` : ""), { errors });
+  return { batchId, added, totalAdded: runAdded, done, searched, skipped, errors };
 }

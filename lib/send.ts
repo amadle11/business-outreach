@@ -133,21 +133,22 @@ async function markContacted(
 }
 
 /** Daily: send the one automatic follow-up email to contacted leads who never replied. */
-export async function sendDueFollowups(): Promise<number> {
+export async function sendDueFollowups(limit = 5): Promise<{ sent: number; more: boolean }> {
   const s = await getSettings();
-  if (s.followup_enabled !== "1") return 0;
+  if (s.followup_enabled !== "1" || s.live_sending !== "1" || setupProblems(s).email.length > 0) return { sent: 0, more: false };
   const today = new Date().toISOString().slice(0, 10);
   const due = await all<Business>(
     `SELECT * FROM businesses WHERE status='contacted' AND channel='email' AND followups_sent=0
-       AND follow_up_at IS NOT NULL AND follow_up_at <= ? AND last_reply_at IS NULL`,
-    [today],
+       AND follow_up_at IS NOT NULL AND follow_up_at <= ? AND last_reply_at IS NULL LIMIT ?`,
+    [today, limit + 1],
   );
+  const more = due.length > limit;
+  due.splice(limit);
   let n = 0;
   for (const b of due) {
     if (await isSuppressed(b)) continue;
     try {
       if (!b.is_sample) {
-        if (s.live_sending !== "1") continue;
         const m = composeEmail(b, s, "followup");
         await sendMail({
           to: b.email!,
@@ -169,7 +170,7 @@ export async function sendDueFollowups(): Promise<number> {
       await logEvent(b.id, "error", `Follow-up failed: ${e instanceof Error ? e.message : e}`);
     }
   }
-  return n;
+  return { sent: n, more };
 }
 
 /** Tell yourself new leads are ready (sent to your own Gmail). */

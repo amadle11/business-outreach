@@ -10,7 +10,7 @@ type T = {
   postcard_message: string;
 };
 
-const SAMPLE = { business_name: "Bay Avenue Barbers", town: "Somers Point", category: "barber shop", preview_url: "https://your-app.vercel.app/p/bay-avenue-barbers-x1y2z" };
+const SAMPLE = { business_name: "Bay Avenue Barbers", town: "Somers Point", category: "barber shop", preview_url: "https://your-site.netlify.app/p/bay-avenue-barbers-x1y2z" };
 
 function fill(t: string, v: Record<string, string>) {
   return t.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, k: string) => (k in v ? v[k] : `{{${k}}}`));

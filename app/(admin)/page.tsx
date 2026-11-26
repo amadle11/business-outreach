@@ -3,7 +3,8 @@ import { all, one } from "@/lib/db";
 import { getSettings, setupProblems } from "@/lib/settings";
 import { EVENT_ICON, fmtDate } from "@/lib/format";
 import ActionButton from "@/components/ActionButton";
-import { checkInboxNow, clearFollowUp, findLeadsNow, loadSampleLeads, markHandled } from "./actions";
+import { checkInboxNow, clearFollowUp, loadSampleLeads, markHandled } from "./actions";
+import FindLeadsButton from "@/components/FindLeadsButton";
 import type { Business, EventRow } from "@/lib/types";
 import { lobMode } from "@/lib/postcard";
 
@@ -64,7 +65,7 @@ export default async function Dashboard() {
       )}
 
       <div className="row gap wrap">
-        <ActionButton action={findLeadsNow} label="Find leads now" busyLabel="Searching…" />
+        <FindLeadsButton />
         <ActionButton action={checkInboxNow} label="Check Gmail for replies" busyLabel="Checking…" />
         <ActionButton action={loadSampleLeads} label="Add sample leads" />
       </div>

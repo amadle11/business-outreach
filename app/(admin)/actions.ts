@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { all, logEvent, run } from "@/lib/db";
 import { setStatus } from "@/lib/businesses";
-import { findLeads } from "@/lib/places";
+import { findLeadsChunk } from "@/lib/places";
 import { loadSamples } from "@/lib/sample";
 import { sendApproved, type SendSummary } from "@/lib/send";
 import { checkInbox } from "@/lib/inbox";
@@ -30,8 +30,9 @@ export async function unreviewLeads(ids: number[]) {
   refresh();
 }
 
-export async function sendNow(): Promise<SendSummary> {
-  const r = await sendApproved();
+/** Sends a few leads per call so each request stays short; the Review page calls it in a loop. */
+export async function sendNow(ids: number[]): Promise<SendSummary> {
+  const r = await sendApproved(ids);
   refresh();
   return r;
 }
@@ -43,14 +44,19 @@ export async function updateEmail(id: number, email: string) {
   refresh();
 }
 
-export async function findLeadsNow(): Promise<string> {
+/** One step of the lead search. The dashboard button calls it repeatedly until done. */
+export async function findLeadsStep(fresh: boolean): Promise<{ done: boolean; total: number; error?: string }> {
   try {
-    const r = await findLeads();
-    refresh();
-    return `Found ${r.added} new leads from ${r.searched.length} searches.${r.errors.length ? " Errors: " + r.errors[0] : ""}`;
+    const r = await findLeadsChunk({ fresh });
+    if (r.done) refresh();
+    return { done: r.done, total: r.totalAdded, error: r.errors[0] };
   } catch (e) {
-    return `Lead search failed: ${e instanceof Error ? e.message : e}`;
+    return { done: true, total: 0, error: e instanceof Error ? e.message : String(e) };
   }
+}
+
+export async function approvedIds(): Promise<number[]> {
+  return (await all<{ id: number }>("SELECT id FROM businesses WHERE status='approved' ORDER BY id")).map((r) => r.id);
 }
 
 export async function checkInboxNow(): Promise<string> {

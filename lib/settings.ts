@@ -96,6 +96,9 @@ export const DEFAULTS: Record<string, string> = {
   followup_body: DEFAULT_FOLLOWUP_BODY,
   postcard_message: DEFAULT_POSTCARD_MESSAGE,
   search_cursor: "0",
+  run_batch: "",
+  run_added: "0",
+  run_searches: "0",
   last_inbox_check: "",
   min_reviews: "0",
 };
@@ -124,7 +127,7 @@ export function lines(s: string): string[] {
 }
 
 export function appUrl(): string {
-  return (process.env.APP_URL || "http://localhost:3000").replace(/\/$/, "");
+  return (process.env.APP_URL || process.env.URL || "http://localhost:3000").replace(/\/$/, "");
 }
 
 export function mailingAddressText(s: Settings): string {
