@@ -31,6 +31,7 @@ export const PLACEHOLDERS = [
   ["preview_url", "Link to their sample site"],
   ["my_name", "Your name (Settings)"],
   ["my_phone", "Your phone (Settings)"],
+  ["my_email", "Your email (Settings, or your Gmail)"],
   ["my_area", "Where you're from (Settings)"],
   ["site_price", "Site price (Settings)"],
   ["hosting_price", "Monthly hosting price (Settings)"],

@@ -41,6 +41,7 @@ body{width:9.25in;height:6.25in;font-family:Helvetica,Arial,sans-serif;backgroun
 export function postcardBackHtml(b: Business, s: Settings, preview = false): string {
   const msg = postcardBackMessage(b, s);
   const qr = `${appUrl()}/api/qr/${b.token}`;
+  const myEmail = s.my_email || process.env.GMAIL_ADDRESS || "";
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{width:9.25in;height:6.25in;font-family:Helvetica,Arial,sans-serif;color:#212529;background:#fff}
@@ -55,8 +56,8 @@ body{width:9.25in;height:6.25in;font-family:Helvetica,Arial,sans-serif;color:#21
 </style></head><body>
 <div class="left"><div class="msg">${escapeHtml(msg)}</div>
 <div class="qr"><img src="${qr}"><div><b>Scan to see your site</b><br>or call/text ${escapeHtml(s.my_phone)}</div></div></div>
-${preview ? `<div style="position:absolute;right:0.15in;bottom:0.15in;width:4in;height:2.375in;border:2px dashed #adb5bd;color:#868e96;display:flex;align-items:center;justify-content:center;font-size:13px">Lob prints the business's address + postage here</div>` : ""}
-<div class="top"><b>${escapeHtml(s.my_name)}</b><br>Websites &amp; custom business tools<br>${escapeHtml(s.my_phone)}</div>
+${preview ? `<div style="position:absolute;right:0.15in;bottom:0.15in;width:4in;height:2.375in;border:2px dashed #adb5bd;color:#868e96;display:flex;align-items:center;justify-content:center;font-size:13px">Lob prints the business's address + postage here (no return address)</div>` : ""}
+<div class="top"><b>${escapeHtml(s.my_name)}</b><br>Websites &amp; custom business tools<br>${escapeHtml(s.my_phone)}${myEmail ? `<br>${escapeHtml(myEmail)}` : ""}</div>
 </body></html>`;
 }
 
@@ -79,15 +80,7 @@ export async function sendPostcard(b: Business, s: Settings): Promise<{ id: stri
       address_zip: b.zip,
       address_country: "US",
     },
-    from: {
-      name: s.my_name,
-      address_line1: s.mailing_address_line1,
-      address_line2: s.mailing_address_line2 || undefined,
-      address_city: s.mailing_city,
-      address_state: s.mailing_state,
-      address_zip: s.mailing_zip,
-      address_country: "US",
-    },
+    // No "from": Lob allows US postcards without a return address, so your home address is never printed.
     size: "6x9",
     use_type: "marketing",
     front: postcardFrontHtml(b),

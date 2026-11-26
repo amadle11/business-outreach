@@ -45,7 +45,10 @@ export async function sendApproved(ids?: number[]): Promise<SendSummary> {
         continue;
       }
       if (ch === "email") {
-        if (problems.email.length) throw new Error(problems.email.join("; "));
+        if (live && problems.email.length) {
+          out.skipped.push({ name: b.name, reason: `email paused: ${problems.email[0]}` });
+          continue;
+        }
         const m = composeEmail(b, s);
         if (!live) {
           // Test mode: send the exact email to yourself instead of the business.

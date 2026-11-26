@@ -41,10 +41,13 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <label style={{ flex: 1 }}>Your phone <input name="my_phone" defaultValue={s.my_phone} placeholder="(609) 555-1234" /></label>
           <label style={{ flex: 1 }}>Where you&apos;re from <input name="my_area" defaultValue={s.my_area} /></label>
         </div>
+        <label>Email shown on postcards (leave blank to use your Gmail) <input name="my_email" defaultValue={s.my_email} /></label>
         <p className="muted small" style={{ margin: 0 }}>
-          Mailing address: required by CAN-SPAM in every email footer, and used as the postcard return address. A PO box works.
+          <b>Email footer address.</b> Cold emails legally need a postal address in the footer (CAN-SPAM). Use a PO box or a
+          virtual mailbox, never your home. It appears only at the bottom of emails, never on postcards or sample sites.
+          Email sending stays paused until this is filled in. Postcards don&apos;t need it.
         </p>
-        <label>Address line 1 <input name="mailing_address_line1" defaultValue={s.mailing_address_line1} /></label>
+        <label>PO box or mailbox address <input name="mailing_address_line1" defaultValue={s.mailing_address_line1} placeholder="PO Box 123" /></label>
         <label>Address line 2 <input name="mailing_address_line2" defaultValue={s.mailing_address_line2} /></label>
         <div className="row gap">
           <label style={{ flex: 2 }}>City <input name="mailing_city" defaultValue={s.mailing_city} /></label>
@@ -67,7 +70,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           {PLACEHOLDERS.map(([k, d]) => (
             <code key={k} title={d}>{`{{${k}}}`} </code>
           ))}
-          . Your name, mailing address and an unsubscribe link are added under every email automatically.
+          . Your name, PO box and an unsubscribe link are added under every email automatically.
         </p>
         <TemplateEditor
           initial={{

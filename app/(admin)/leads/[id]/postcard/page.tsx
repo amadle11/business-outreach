@@ -12,7 +12,7 @@ export default async function PostcardPreview({ params }: { params: Promise<{ id
     <div className="stack">
       <div className="row gap">
         <Link href={`/leads/${b.id}`}>← {b.name}</Link>
-        <span className="muted small">6&quot; × 9&quot; postcard. Lob prints the mailing address in the blank bottom-right of the back.</span>
+        <span className="muted small">6&quot; × 9&quot; postcard. Lob prints their address and postage in the blank bottom-right of the back. No return address is printed.</span>
       </div>
       <h3>Front</h3>
       <div className="pc"><iframe srcDoc={postcardFrontHtml(b)} title="front" /></div>

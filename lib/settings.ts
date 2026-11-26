@@ -41,7 +41,8 @@ I noticed you don't have a website, so I built you a free sample. Scan the code 
 
 If you like it, I'll make it yours. I also build custom tools that automate the manual stuff in your business.
 
-Call or text me: {{my_phone}}`;
+Call or text me: {{my_phone}}
+Email: {{my_email}}`;
 
 export const DEFAULT_CATEGORIES = [
   "restaurant",
@@ -145,11 +146,10 @@ export function setupProblems(s: Settings): { email: string[]; postcard: string[
   if (!process.env.GMAIL_ADDRESS || !process.env.GMAIL_APP_PASSWORD)
     email.push("Gmail address and app password are not set (GMAIL_ADDRESS, GMAIL_APP_PASSWORD)");
   if (!s.mailing_address_line1 || !s.mailing_city || !s.mailing_zip)
-    email.push("Your physical mailing address is required by CAN-SPAM (Settings)");
+    email.push("Add a PO box or virtual mailbox address in Settings. The law (CAN-SPAM) requires one in the footer of cold emails, so email sending is paused until it's set");
   if (!s.my_phone) email.push("Your phone number is not set (Settings)");
   if (!process.env.LOB_API_KEY) postcard.push("Lob API key is not set (LOB_API_KEY)");
-  if (!s.mailing_address_line1 || !s.mailing_city || !s.mailing_zip)
-    postcard.push("Return address is required (Settings)");
+  if (!s.my_phone) postcard.push("Your phone number is not set (Settings)");
   if (!process.env.GOOGLE_PLACES_API_KEY)
     leads.push("Google Places API key is not set (GOOGLE_PLACES_API_KEY)");
   return { email, postcard, leads };

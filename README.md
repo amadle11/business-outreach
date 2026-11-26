@@ -6,7 +6,7 @@ A small, mostly hands-off tool for finding local NJ businesses with no website, 
 
 1. **Monday 8 AM (ET):** searches Google Places for businesses in your towns and categories, keeps only the ones with no real website (a Facebook, Instagram, Yelp or ordering-app page doesn't count), and builds a one-page sample site for each. You get an email: "N new leads ready for review".
 2. **You** open **Review**, look over everything we know about each business (type, rating, reviews, photos, hours, address, phone, email, socials, Maps link, the sample site itself), approve or remove in bulk, and press **Send**.
-3. Leads with an email get your email from your Gmail. Leads without one get a 6×9 postcard through Lob with a picture of their site, a QR code that's unique to them, and your phone number.
+3. Leads with an email get your email from your Gmail. Leads without one get a 6×9 postcard through Lob with a picture of their site, a QR code that's unique to them, and your phone and email. No return address is printed.
 4. **Every day 9 AM (ET):** checks your Gmail for replies and flags the ones that need an answer, notices when you've answered, catches bounces, and sends one polite follow-up email to people who haven't replied after 5 days (you can turn this off).
 5. **Tracker** shows every business contacted, what was sent, site views, QR scans, replies, follow-ups due, calls you've logged, and won or lost.
 
@@ -24,7 +24,7 @@ A small, mostly hands-off tool for finding local NJ businesses with no website, 
 ## Safety rails
 
 - **Test mode is on by default.** Nothing reaches a real business until you turn on *Live sending* in Settings. In test mode, each email is sent to *you* instead so you can see exactly what they'd get.
-- **CAN-SPAM:** every email gets your name, your physical mailing address and an unsubscribe link added at the bottom, plus Gmail's one-click unsubscribe header. Unsubscribes and "no thanks" replies are tracked, and opted-out businesses are never contacted again (their sample site is taken down too).
+- **CAN-SPAM:** every email gets your name, a PO box or virtual mailbox address (never your home) and an unsubscribe link added at the bottom, plus Gmail's one-click unsubscribe header. Unsubscribes and "no thanks" replies are tracked, and opted-out businesses are never contacted again (their sample site is taken down too).
 - A Lob key starting with `test_` never mails anything.
 - Sample leads (the "Add sample leads" button) are fake and sends to them are only simulated.
 
@@ -72,7 +72,8 @@ Project → Settings → Environment Variables:
 Redeploy after adding them.
 
 ### 7. In the app
-1. Log in, go to **Settings**, fill in your phone and mailing address (a PO box is fine; it's legally required in cold emails and is the postcard return address).
+1. Log in, go to **Settings**, fill in your phone. Postcards work right away: they carry no return address, only your name, phone, email and the QR code.
+   Email sending stays paused until you add a PO box or virtual mailbox address. The law requires a postal address in the footer of cold emails, and this is the only place it appears. A USPS PO box or an online virtual mailbox both work.
 2. Tweak the email wording if you want.
 3. Dashboard → **Find leads now** to run the first search without waiting for Monday.
 4. Approve a few, press Send in test mode, and check your inbox.

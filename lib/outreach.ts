@@ -8,7 +8,7 @@ export function unsubscribeUrl(b: Business) {
 
 /** CAN-SPAM footer: who you are, a physical address, and an opt-out. Always appended. */
 export function complianceFooter(b: Business, s: Settings) {
-  const addr = mailingAddressText(s) || "[your mailing address — set it in Settings]";
+  const addr = mailingAddressText(s) || "[PO box address — set it in Settings]";
   return {
     text: `\n\n--\n${s.my_name} · ${addr}\nNot interested? Reply "no thanks" or unsubscribe here and I won't email again: ${unsubscribeUrl(b)}`,
     html: `<hr style="border:none;border-top:1px solid #ddd;margin:24px 0 12px"><p style="font-size:12px;color:#777;line-height:1.5">${escapeHtml(s.my_name)} · ${escapeHtml(addr)}<br>Not interested? Reply "no thanks" or <a href="${unsubscribeUrl(b)}" style="color:#777">unsubscribe here</a> and I won't email again.</p>`,

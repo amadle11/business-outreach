@@ -70,7 +70,7 @@ export default function TemplateEditor({
           )}
           <pre className="emailpre">
             {fill(tab === "email" ? t.email_body : tab === "followup" ? t.followup_body : t.postcard_message, v)}
-            {tab !== "postcard" && `\n\n--\n${settings.my_name} · [your mailing address]\nNot interested? Reply "no thanks" or unsubscribe here and I won't email again: [link]`}
+            {tab !== "postcard" && `\n\n--\n${settings.my_name} · [your PO box / virtual mailbox]\nNot interested? Reply "no thanks" or unsubscribe here and I won't email again: [link]`}
           </pre>
         </div>
       </div>
