@@ -88,10 +88,23 @@ function getClient(): Client {
   return client;
 }
 
+// Columns added after the first release. SQLite has no "ADD COLUMN IF NOT EXISTS", so failures are ignored.
+const MIGRATIONS = [
+  "ALTER TABLE businesses ADD COLUMN lead_type TEXT NOT NULL DEFAULT 'no_site'",
+  "ALTER TABLE businesses ADD COLUMN site_score INTEGER",
+  "ALTER TABLE businesses ADD COLUMN site_issues TEXT",
+  "ALTER TABLE businesses ADD COLUMN site_checked_at TEXT",
+];
+
+async function migrate(c: Client) {
+  await c.executeMultiple(SCHEMA);
+  for (const m of MIGRATIONS) await c.execute(m).catch(() => {});
+}
+
 export async function db(): Promise<Client> {
   const c = getClient();
   if (!ready) {
-    ready = c.executeMultiple(SCHEMA).catch((e) => {
+    ready = migrate(c).catch((e) => {
       ready = null;
       throw e;
     });

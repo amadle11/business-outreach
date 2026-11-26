@@ -30,6 +30,8 @@ export type NewBusiness = {
   lng?: number | null;
   business_status?: string | null;
   search_query?: string | null;
+  lead_type?: "no_site" | "outdated";
+  status?: string;
 };
 
 export async function insertBusiness(b: NewBusiness): Promise<number> {
@@ -38,8 +40,8 @@ export async function insertBusiness(b: NewBusiness): Promise<number> {
   const r = await run(
     `INSERT INTO businesses (place_id, batch_id, is_sample, name, category, primary_type, types, profile,
       address, street, city, state, zip, phone, email, socials, listed_website, hours, rating, review_count,
-      reviews, photos, maps_url, lat, lng, business_status, search_query, slug, token)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      reviews, photos, maps_url, lat, lng, business_status, search_query, slug, token, lead_type, status)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       b.place_id ?? null,
       b.batch_id ?? null,
@@ -70,10 +72,12 @@ export async function insertBusiness(b: NewBusiness): Promise<number> {
       b.search_query ?? null,
       slug,
       token,
+      b.lead_type ?? "no_site",
+      b.status ?? "new",
     ],
   );
   const id = Number(r.lastInsertRowid);
-  await logEvent(id, "found", b.search_query ? `Found via "${b.search_query}"` : "Added");
+  if (b.status !== "checking") await logEvent(id, "found", b.search_query ? `Found via "${b.search_query}"` : "Added");
   return id;
 }
 

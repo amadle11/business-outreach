@@ -18,7 +18,7 @@ export default async function Tracker({ searchParams }: { searchParams: Promise<
   const { status = "all", q = "" } = await searchParams;
   const where: string[] = [];
   const args: string[] = [];
-  if (status === "all") where.push("status NOT IN ('new','approved','removed')");
+  if (status === "all") where.push("status NOT IN ('new','approved','removed','checking','modern_site')");
   else {
     where.push("status = ?");
     args.push(status);

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { all, logEvent, run } from "@/lib/db";
 import { setStatus } from "@/lib/businesses";
-import { findLeadsChunk } from "@/lib/places";
+import { weeklyStep } from "@/lib/weekly";
 import { loadSamples } from "@/lib/sample";
 import { sendApproved, type SendSummary } from "@/lib/send";
 import { checkInbox } from "@/lib/inbox";
@@ -45,13 +45,13 @@ export async function updateEmail(id: number, email: string) {
 }
 
 /** One step of the lead search. The dashboard button calls it repeatedly until done. */
-export async function findLeadsStep(fresh: boolean): Promise<{ done: boolean; total: number; error?: string }> {
+export async function findLeadsStep(fresh: boolean): Promise<{ done: boolean; total: number; phase: string; error?: string }> {
   try {
-    const r = await findLeadsChunk({ fresh });
+    const r = await weeklyStep(fresh);
     if (r.done) refresh();
-    return { done: r.done, total: r.totalAdded, error: r.errors[0] };
+    return { done: r.done, total: r.ready, phase: r.phase, error: r.error };
   } catch (e) {
-    return { done: true, total: 0, error: e instanceof Error ? e.message : String(e) };
+    return { done: true, total: 0, phase: "error", error: e instanceof Error ? e.message : String(e) };
   }
 }
 

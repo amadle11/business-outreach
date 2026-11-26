@@ -104,6 +104,16 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
           <div className="card">
             <h3>Everything we know</h3>
             <div className="facts">
+              {b.lead_type === "outdated" && (
+                <div>
+                  <b>Their site</b>
+                  <span>
+                    <a href={b.listed_website ?? "#"} target="_blank" rel="noreferrer">{b.listed_website}</a>
+                    {b.site_score != null && <> · outdated score {b.site_score}/100</>}
+                    <ul className="issues">{parseJson<string[]>(b.site_issues, []).map((i) => <li key={i}>{i}</li>)}</ul>
+                  </span>
+                </div>
+              )}
               <div><b>Type</b><span>{b.category}</span></div>
               <div><b>Rating</b><span>{b.rating ? `★ ${b.rating.toFixed(1)} (${b.review_count} reviews)` : "None"}</span></div>
               <div><b>Address</b><span>{b.address}</span></div>

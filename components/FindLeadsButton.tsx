@@ -13,10 +13,10 @@ export default function FindLeadsButton() {
     setBusy(true);
     setMsg("Searching…");
     let fresh = true;
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 200; i++) {
       const r = await findLeadsStep(fresh);
       fresh = false;
-      setMsg(`Searching… ${r.total} found so far`);
+      setMsg(`${r.phase[0].toUpperCase() + r.phase.slice(1)}… ${r.total} leads ready so far`);
       if (r.done) {
         setMsg(r.error ? `Search stopped: ${r.error}` : `Found ${r.total} new leads. They're on the Review page.`);
         break;

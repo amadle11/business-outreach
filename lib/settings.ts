@@ -44,6 +44,38 @@ If you like it, I'll make it yours. I also build custom tools that automate the 
 Call or text me: {{my_phone}}
 Email: {{my_email}}`;
 
+export const DEFAULT_OUTDATED_SUBJECT = "A free refreshed website for {{business_name}}";
+
+export const DEFAULT_OUTDATED_BODY = `Hi {{business_name}} team,
+
+My name is {{my_name}}. I'm a young software engineer from {{my_area}}. I work a full-time job and take on side projects to pay down my student loans, so I'll be honest: I'm hungry for work.
+
+I came across your website ({{current_site}}) and noticed a few things that could be costing you customers:
+{{site_issues}}
+
+So I went ahead and built a quick sample of what a refreshed, phone-friendly version could look like. Free, no strings attached:
+
+{{preview_url}}
+
+If you like it, I can make it yours, put it on your existing domain, and keep it running for you. A site like this usually runs about \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates. No pressure and no hidden fees.
+
+Beyond websites, I also build custom tools for businesses: online booking, order forms, customer lists, or automating the paperwork and manual tasks that eat up your day.
+
+Happy to sort it all out over email, or call or text me at {{my_phone}}.
+
+Thanks for your time,
+{{my_name}}
+{{my_phone}}`;
+
+export const DEFAULT_OUTDATED_CALL_SCRIPT = `Hi, is this the owner? My name's {{my_name}}, I'm a local software developer here in {{my_area}}.
+
+I was looking at {{business_name}}'s website and noticed a couple of things that might be costing you customers:
+{{site_issues}}
+
+So I put together a free sample of a refreshed version. No strings attached. Can I text you the link?
+
+(If yes: send the text, then:) If you like it, I can swap it in on your current web address. Usually around \${{site_price}} one-time. I also build custom tools for things like booking or order forms. Just text or call me back at this number.`;
+
 export const DEFAULT_CALL_SCRIPT = `Hi, is this the owner? My name's {{my_name}}, I'm a local software developer here in {{my_area}}.
 
 I was looking up businesses in {{town}} and noticed {{business_name}} doesn't have a website, so I went ahead and built you a free sample. No strings attached.
@@ -112,6 +144,13 @@ export const DEFAULTS: Record<string, string> = {
   postcard_message: DEFAULT_POSTCARD_MESSAGE,
   search_cursor: "0",
   run_batch: "",
+  last_batch: "",
+  // Which businesses to look for: "outdated" (have a website that looks old/broken), "no_site", or "both".
+  lead_types: "outdated",
+  min_outdated_score: "35",
+  email_subject_outdated: DEFAULT_OUTDATED_SUBJECT,
+  email_body_outdated: DEFAULT_OUTDATED_BODY,
+  call_script_outdated: DEFAULT_OUTDATED_CALL_SCRIPT,
   run_added: "0",
   run_searches: "0",
   last_inbox_check: "",

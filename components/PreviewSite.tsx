@@ -66,7 +66,7 @@ export default function PreviewSite({ b, s, banner = true }: { b: Business; s: S
 `}</style>
       {banner && (
         <div className="banner">
-          This is a free sample website {s.my_name} made for {b.name}. Like it?{" "}
+          This is a free {b.lead_type === "outdated" ? "redesign sample" : "sample website"} {s.my_name} made for {b.name}. Like it?{" "}
           {s.my_phone ? (
             <>
               Call or text <a href={`tel:${s.my_phone.replace(/[^\d+]/g, "")}`}>{s.my_phone}</a>

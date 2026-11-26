@@ -51,6 +51,10 @@ export type Business = {
   last_reply_snippet: string | null;
   scans: number;
   views: number;
+  lead_type: string;
+  site_score: number | null;
+  site_issues: string | null;
+  site_checked_at: string | null;
   created_at: string;
   updated_at: string;
 };

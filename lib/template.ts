@@ -1,4 +1,4 @@
-import type { Business } from "./types";
+import { parseJson, type Business } from "./types";
 import { appUrl, type Settings } from "./settings";
 
 export function previewUrl(b: Pick<Business, "slug">, source?: string) {
@@ -17,6 +17,11 @@ export function vars(b: Business, s: Settings, source = "email"): Record<string,
     my_email: s.my_email || process.env.GMAIL_ADDRESS || "",
     site_price: s.site_price,
     hosting_price: s.hosting_price,
+    current_site: (b.listed_website || "").replace(/^https?:\/\//, "").replace(/\/$/, ""),
+    site_issues: parseJson<string[]>(b.site_issues, [])
+      .slice(0, 3)
+      .map((i) => `- ${i}`)
+      .join("\n"),
   };
 }
 
@@ -35,6 +40,8 @@ export const PLACEHOLDERS = [
   ["my_area", "Where you're from (Settings)"],
   ["site_price", "Site price (Settings)"],
   ["hosting_price", "Monthly hosting price (Settings)"],
+  ["current_site", "Their current website (outdated-site leads)"],
+  ["site_issues", "Top 3 problems found on their site (outdated-site leads)"],
 ] as const;
 
 export function escapeHtml(s: string) {

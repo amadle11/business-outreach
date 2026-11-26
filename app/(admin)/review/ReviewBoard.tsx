@@ -28,6 +28,10 @@ export type ReviewLead = {
   slug: string;
   channel: "email" | "postcard" | "call" | "none";
   found: string;
+  leadType: string;
+  currentSite: string | null;
+  siteScore: number | null;
+  siteIssues: string[];
 };
 
 const CH_LABEL = { email: "✉️ Email", postcard: "📮 Postcard", call: "📞 Call list", none: "⛔ Can't reach" };
@@ -231,6 +235,11 @@ function LeadCard({
         </label>
         {l.isSample && <span className="pill">sample</span>}
         <span className={`pill ch-${l.channel}`}>{CH_LABEL[l.channel]}</span>
+        {l.leadType === "outdated" ? (
+          <span className="pill red">Outdated site{l.siteScore != null ? ` · ${l.siteScore}/100` : ""}</span>
+        ) : (
+          <span className="pill">No website</span>
+        )}
         <span style={{ flex: 1 }} />
         {l.status === "new" ? (
           <>
@@ -244,9 +253,20 @@ function LeadCard({
       <div className="lead-body">
         <a className="thumb" href={`/p/${l.slug}`} target="_blank" rel="noreferrer" title="Open sample site">
           <iframe src={`/p/${l.slug}`} loading="lazy" tabIndex={-1} title={`${l.name} preview`} />
-          <span>Open sample site ↗</span>
+          <span>{l.leadType === "outdated" ? "Open redesign sample ↗" : "Open sample site ↗"}</span>
         </a>
         <div className="facts">
+          {l.currentSite && (
+            <div>
+              <b>Their site</b>
+              <span>
+                <a href={l.currentSite} target="_blank" rel="noreferrer" className="trunc">{l.currentSite.replace(/^https?:\/\/(www\.)?/, "")}</a>
+                {l.siteIssues.length > 0 && (
+                  <ul className="issues">{l.siteIssues.map((i) => <li key={i}>{i}</li>)}</ul>
+                )}
+              </span>
+            </div>
+          )}
           <div><b>Type</b><span>{l.category || "Unknown"} · design: {l.design}</span></div>
           <div>
             <b>Rating</b>

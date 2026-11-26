@@ -21,8 +21,9 @@ function linkify(htmlEscaped: string) {
 
 export function composeEmail(b: Business, s: Settings, kind: "first" | "followup" = "first") {
   const v = vars(b, s, kind === "first" ? "email" : "followup");
-  const subject = fill(kind === "first" ? s.email_subject : s.followup_subject, v);
-  const body = fill(kind === "first" ? s.email_body : s.followup_body, v);
+  const outdated = b.lead_type === "outdated";
+  const subject = fill(kind === "first" ? (outdated ? s.email_subject_outdated : s.email_subject) : s.followup_subject, v);
+  const body = fill(kind === "first" ? (outdated ? s.email_body_outdated : s.email_body) : s.followup_body, v);
   const footer = complianceFooter(b, s);
   const html =
     `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222;max-width:600px">` +

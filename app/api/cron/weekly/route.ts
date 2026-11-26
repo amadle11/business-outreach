@@ -1,25 +1,25 @@
 import { NextResponse } from "next/server";
 import { cronAuthorized } from "@/lib/cron";
-import { findLeadsChunk } from "@/lib/places";
+import { weeklyStep } from "@/lib/weekly";
 import { notifySelf } from "@/lib/send";
 import { appUrl } from "@/lib/settings";
 
 export const maxDuration = 26;
 
 /**
- * Weekly lead search, one small step per request (a few Google searches) so it fits hosting time limits.
- * The scheduler calls it with ?fresh=1 first, then again until it answers { done: true }.
- * When done, it emails you a link to review the new leads.
+ * Weekly lead run, one short step per request (a Google search, or a few website checks), so each
+ * request fits hosting time limits. The scheduler calls it with ?fresh=1 first, then again until
+ * it answers { done: true }. When done, it emails you a link to review the new leads.
  */
 export async function GET(req: Request) {
   if (!cronAuthorized(req)) return new NextResponse("Unauthorized", { status: 401 });
   const fresh = new URL(req.url).searchParams.get("fresh") === "1";
   try {
-    const r = await findLeadsChunk({ fresh });
+    const r = await weeklyStep(fresh);
     if (r.done) {
       await notifySelf(
-        r.errors.length ? "Weekly lead search hit a problem" : `${r.totalAdded} new leads ready for review`,
-        `This week's search found ${r.totalAdded} local businesses with no website.\n\nReview and approve them here: ${appUrl()}/review\n${r.errors.length ? "\nError:\n" + r.errors.join("\n") : ""}`,
+        r.error ? "Weekly lead search hit a problem" : `${r.ready} new leads ready for review`,
+        `This week's search found ${r.ready} local businesses to pitch.\n\nReview and approve them here: ${appUrl()}/review\n${r.error ? "\nError:\n" + r.error : ""}`,
       ).catch(() => {});
     }
     return NextResponse.json(r);

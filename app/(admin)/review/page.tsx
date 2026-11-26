@@ -9,7 +9,7 @@ import ReviewBoard, { type ReviewLead } from "./ReviewBoard";
 export default async function ReviewPage() {
   const s = await getSettings();
   const rows = await all<Business>(
-    "SELECT * FROM businesses WHERE status IN ('new','approved') ORDER BY status DESC, rating IS NULL, review_count DESC, id",
+    "SELECT * FROM businesses WHERE status IN ('new','approved') ORDER BY status DESC, lead_type = 'outdated' DESC, site_score DESC, rating IS NULL, review_count DESC, id",
   );
   const leads: ReviewLead[] = rows.map((b) => ({
     id: b.id,
@@ -33,6 +33,10 @@ export default async function ReviewPage() {
     slug: b.slug,
     channel: channelFor(b, s.outreach_mode),
     found: b.created_at,
+    leadType: b.lead_type,
+    currentSite: b.lead_type === "outdated" ? b.listed_website : null,
+    siteScore: b.site_score,
+    siteIssues: parseJson<string[]>(b.site_issues, []),
   }));
   const probs = setupProblems(s);
   return (

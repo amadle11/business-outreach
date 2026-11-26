@@ -80,6 +80,9 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
             followup_body: s.followup_body,
             postcard_message: s.postcard_message,
             call_script: s.call_script,
+            email_subject_outdated: s.email_subject_outdated,
+            email_body_outdated: s.email_body_outdated,
+            call_script_outdated: s.call_script_outdated,
             sms_message: s.sms_message,
           }}
           settings={{ my_name: s.my_name, my_phone: s.my_phone, my_area: s.my_area, site_price: s.site_price, hosting_price: s.hosting_price }}
@@ -104,9 +107,21 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <label style={{ flex: 1 }}>Max new leads per week <input type="number" name="weekly_lead_cap" defaultValue={s.weekly_lead_cap} /></label>
           <label style={{ flex: 1 }}>Skip businesses with fewer than N reviews <input type="number" name="min_reviews" defaultValue={s.min_reviews} /></label>
         </div>
+        <div className="row gap">
+          <label style={{ flex: 2 }}>Look for
+            <select name="lead_types" defaultValue={s.lead_types}>
+              <option value="outdated">Businesses with an outdated or broken website</option>
+              <option value="no_site">Businesses with no website</option>
+              <option value="both">Both</option>
+            </select>
+          </label>
+          <label style={{ flex: 1 }}>Only keep sites scoring at least (0–100) <input type="number" name="min_outdated_score" defaultValue={s.min_outdated_score} /></label>
+        </div>
         <p className="muted small">
           Each week the search picks up where it left off, working through every town × type combination, and stops once it has enough
-          new businesses with no website. Facebook, Instagram, Yelp and ordering-app pages don&apos;t count as a website.
+          new leads. Facebook, Instagram, Yelp and ordering-app pages don&apos;t count as a website. For businesses that have a site, it
+          checks the homepage and contact page: phone-friendliness, https, copyright year, old tech, placeholder text, hacked/spam
+          content, and any email address. Higher score = more outdated.
         </p>
         <button className="btn primary">Save</button>
       </form>

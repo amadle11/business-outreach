@@ -96,6 +96,9 @@ export async function findLeadsChunk(opts: { fresh?: boolean; maxSearches?: numb
   const cats = lines(s.categories);
   const cap = opts.cap ?? (Number(s.weekly_lead_cap) || 30);
   const minReviews = Number(s.min_reviews) || 0;
+  const mode = s.lead_types; // "outdated" | "no_site" | "both"
+  // Sites still need checking, and many will turn out fine, so collect more candidates than the cap.
+  const limit = mode === "no_site" ? cap : cap * 2;
   const pairs = towns.flatMap((t) => cats.map((c) => `${c} in ${t}`));
   if (!pairs.length) throw new Error("Add at least one town and one category in Settings");
 
@@ -124,7 +127,7 @@ export async function findLeadsChunk(opts: { fresh?: boolean; maxSearches?: numb
   const maxSearches = opts.maxSearches ?? 3;
 
   // Walk through town×category pairs, continuing from where the last search stopped.
-  while (searched.length < maxSearches && runSearches < pairs.length && runAdded + added < cap) {
+  while (searched.length < maxSearches && runSearches < pairs.length && runAdded + added < limit) {
     const query = pairs[cursor % pairs.length];
     cursor++;
     runSearches++;
@@ -137,17 +140,19 @@ export async function findLeadsChunk(opts: { fresh?: boolean; maxSearches?: numb
       break;
     }
     for (const p of places) {
-      if (runAdded + added >= cap) break;
+      if (runAdded + added >= limit) break;
       if (known.has(p.id) || suppressed.has(p.id)) continue;
       known.add(p.id);
       if (p.businessStatus && p.businessStatus !== "OPERATIONAL") continue;
       const state = comp(p, "administrative_area_level_1", true);
       if (state && state !== "NJ") continue;
       const site = p.websiteUri;
-      if (site && !NOT_A_WEBSITE.test(site)) {
+      const hasRealSite = !!site && !NOT_A_WEBSITE.test(site);
+      if (hasRealSite && mode === "no_site") {
         skipped++;
         continue;
       }
+      if (!hasRealSite && mode === "outdated") continue;
       if ((p.userRatingCount ?? 0) < minReviews) continue;
       if (!p.nationalPhoneNumber && !p.formattedAddress) continue;
 
@@ -175,7 +180,7 @@ export async function findLeadsChunk(opts: { fresh?: boolean; maxSearches?: numb
         state,
         zip: comp(p, "postal_code"),
         phone: p.nationalPhoneNumber ?? null,
-        socials: site ? [site] : [],
+        socials: site && !hasRealSite ? [site] : [],
         listed_website: site ?? null,
         hours: p.regularOpeningHours?.weekdayDescriptions ?? [],
         rating: p.rating ?? null,
@@ -190,13 +195,17 @@ export async function findLeadsChunk(opts: { fresh?: boolean; maxSearches?: numb
         lng: p.location?.longitude ?? null,
         business_status: p.businessStatus ?? null,
         search_query: query,
+        lead_type: hasRealSite ? "outdated" : "no_site",
+        // Businesses with a site stay hidden until their site has been checked.
+        status: hasRealSite ? "checking" : "new",
       });
       added++;
     }
   }
 
   runAdded += added;
-  const done = errors.length > 0 || runAdded >= cap || runSearches >= pairs.length;
+  const done = errors.length > 0 || runAdded >= limit || runSearches >= pairs.length;
+  await setSetting("last_batch", String(batchId));
   await setSetting("search_cursor", String(cursor % pairs.length));
   await setSetting("run_batch", done ? "" : String(batchId));
   await setSetting("run_added", String(runAdded));

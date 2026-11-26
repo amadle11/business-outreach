@@ -51,7 +51,7 @@ export default async function CallsPage() {
           tries: tries.get(b.id) ?? 0,
           nextTry: b.follow_up_at && b.follow_up_at > today ? fmtDate(b.follow_up_at) : null,
           sms: b.phone ? smsHref(b.phone, fill(s.sms_message, v)) : "",
-          script: fill(s.call_script, v),
+          script: fill(b.lead_type === "outdated" ? s.call_script_outdated : s.call_script, v),
           isSample: !!b.is_sample,
         }}
       />

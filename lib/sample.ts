@@ -41,7 +41,22 @@ export async function loadSamples() {
       photos: [],
       maps_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name + " " + s.city + " NJ")}`,
       search_query: `${s.category.toLowerCase()} in ${s.city}, NJ`,
+      lead_type: i < 3 ? "outdated" : "no_site",
+      listed_website: i < 3 ? `http://www.${s.name.toLowerCase().replace(/[^a-z]/g, "")}.com` : null,
     });
+    if (i < 3) {
+      // Sample "outdated site" findings, like the weekly website check produces.
+      await run("UPDATE businesses SET site_score=?, site_issues=? WHERE id=(SELECT max(id) FROM businesses)", [
+        [85, 60, 45][i],
+        JSON.stringify(
+          [
+            ["Not built for phones: on a phone the page shows up tiny and zoomed out", "Footer still says © 2014, so it looks abandoned", 'No secure connection (https): Chrome shows "Not secure" next to the address'],
+            ["Footer still says © 2018, so it looks abandoned", "Has leftover template or placeholder text visible to customers", "No tap-to-call phone link"],
+            ['No secure connection (https): Chrome shows "Not secure" next to the address', "No tap-to-call phone link"],
+          ][i],
+        ),
+      ]);
+    }
   }
   return SAMPLES.length;
 }
