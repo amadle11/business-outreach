@@ -1,92 +1,85 @@
 import { all, run } from "./db";
 
-export const DEFAULT_EMAIL_SUBJECT = "I made a free website preview for {{business_name}}";
+export const DEFAULT_EMAIL_SUBJECT = "{{business_name}}: I built you a website (for free, don't panic)";
 
 export const DEFAULT_EMAIL_BODY = `Hi {{business_name}} team,
 
-My name is {{my_name}}. I'm a young software engineer from {{my_area}}. I work a full-time job and take on side projects to pay down my student loans, so I'll be honest: I'm hungry for work.
+I'm {{my_name}}: software engineer by day, website guy by night, and full-time student loan payer in between. So yes, I'm hungry for work. Starving, actually.
 
-I was looking up local businesses in {{town}} and noticed {{business_name}} doesn't have a website. So I went ahead and built a simple sample for you, no strings attached:
-
-{{preview_url}}
-
-If you like it, I can make it yours, put it on your own domain, and keep it running for you. A site like this usually runs about \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates. No pressure and no hidden fees.
-
-Beyond websites, I also build custom tools for businesses: online booking, order forms, customer lists, or automating the paperwork and manual tasks that eat up your day.
-
-Happy to sort it all out over email, or call or text me at {{my_phone}}.
-
-Thanks for your time,
-{{my_name}}
-{{my_phone}}`;
-
-export const DEFAULT_FOLLOWUP_SUBJECT = "Re: I made a free website preview for {{business_name}}";
-
-export const DEFAULT_FOLLOWUP_BODY = `Hi {{business_name}} team,
-
-Just following up in case my last email got buried. Here's the sample site I put together for you:
+I couldn't find a website for {{business_name}}, so I built you one. Free, no strings:
 
 {{preview_url}}
 
-If it's not something you need right now, no worries at all. If you'd like to talk, just reply here or call or text me at {{my_phone}}.
+Like it? I'll make it yours on your own domain for \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates. Don't like it? No hard feelings. I'll just cry quietly into my ramen.
 
-Thanks,
+I also build custom stuff like online booking, order forms, and tools that kill the boring paperwork.
+
+Reply here or call/text me at {{my_phone}}.
+
+{{my_name}}`;
+
+export const DEFAULT_FOLLOWUP_SUBJECT = "Re: {{business_name}}: I built you a website (for free, don't panic)";
+
+export const DEFAULT_FOLLOWUP_BODY = `Hi again!
+
+Bumping this in case it got buried under invoices. Your free sample is still up:
+
+{{preview_url}}
+
+If now's not the time, totally fine. If it is, reply here or text me at {{my_phone}}. My student loans and I would be thrilled.
+
 {{my_name}}`;
 
 export const DEFAULT_POSTCARD_MESSAGE = `Hi {{business_name}}!
 
-I'm {{my_name}}, a local software engineer working full time and paying off student loans, so I'm hungry for work.
+I'm {{my_name}}: software engineer by day, website guy by night, student loan payer always. So I'm hungry for work.
 
-I noticed you don't have a website, so I built you a free sample. Scan the code to see it. No strings attached.
+I built you a free sample website. Scan the code to see it. No strings.
 
-If you like it, I'll make it yours. I also build custom tools that automate the manual stuff in your business.
+Like it? I'll make it yours. Don't? I'll survive. Probably.
 
-Call or text me: {{my_phone}}
+Call or text: {{my_phone}}
 Email: {{my_email}}`;
 
-export const DEFAULT_OUTDATED_SUBJECT = "A free refreshed website for {{business_name}}";
+export const DEFAULT_OUTDATED_SUBJECT = "{{business_name}}: I redid your website (for free, don't panic)";
 
 export const DEFAULT_OUTDATED_BODY = `Hi {{business_name}} team,
 
-My name is {{my_name}}. I'm a young software engineer from {{my_area}}. I work a full-time job and take on side projects to pay down my student loans, so I'll be honest: I'm hungry for work.
+I'm {{my_name}}: software engineer by day, website guy by night, and full-time student loan payer in between. So yes, I'm hungry for work. Starving, actually.
 
-I came across your website ({{current_site}}) and noticed a few things that could be costing you customers:
+I checked out {{current_site}} and spotted a few things that might be costing you customers:
 {{site_issues}}
 
-So I went ahead and built a quick sample of what a refreshed, phone-friendly version could look like. Free, no strings attached:
+So I built you a free, phone-friendly redesign:
 
 {{preview_url}}
 
-If you like it, I can make it yours, put it on your existing domain, and keep it running for you. A site like this usually runs about \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates. No pressure and no hidden fees.
+Like it? I'll put it on your domain for \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates. Don't like it? No hard feelings. I'll just cry quietly into my ramen.
 
-Beyond websites, I also build custom tools for businesses: online booking, order forms, customer lists, or automating the paperwork and manual tasks that eat up your day.
+I also build custom stuff like online booking, order forms, and tools that kill the boring paperwork.
 
-Happy to sort it all out over email, or call or text me at {{my_phone}}.
+Reply here or call/text me at {{my_phone}}.
 
-Thanks for your time,
-{{my_name}}
-{{my_phone}}`;
+{{my_name}}`;
 
-export const DEFAULT_OUTDATED_CALL_SCRIPT = `Hi, is this the owner? My name's {{my_name}}, I'm a local software developer here in {{my_area}}.
+export const DEFAULT_OUTDATED_CALL_SCRIPT = `Hi, is this the owner? I'm {{my_name}}, a local software engineer. Quick 30 seconds, I promise.
 
-I was looking at {{business_name}}'s website and noticed a couple of things that might be costing you customers:
+I was on {{business_name}}'s website and noticed a couple things that might be losing you customers:
 {{site_issues}}
 
-So I put together a free sample of a refreshed version. No strings attached. Can I text you the link?
+So I built you a free redesign. Can I text you the link?
 
-(If yes: send the text, then:) If you like it, I can swap it in on your current web address. Usually around \${{site_price}} one-time. I also build custom tools for things like booking or order forms. Just text or call me back at this number.`;
+(If yes, send the text, then:) If you like it, I'll swap it in on your current web address, usually around \${{site_price}}. Honestly I'm paying off student loans, so I'm hungry for work. Text or call me back anytime at this number.`;
 
-export const DEFAULT_CALL_SCRIPT = `Hi, is this the owner? My name's {{my_name}}, I'm a local software developer here in {{my_area}}.
+export const DEFAULT_CALL_SCRIPT = `Hi, is this the owner? I'm {{my_name}}, a local software engineer. Quick 30 seconds, I promise.
 
-I was looking up businesses in {{town}} and noticed {{business_name}} doesn't have a website, so I went ahead and built you a free sample. No strings attached.
+I couldn't find a website for {{business_name}}, so I built you one for free. Can I text you the link?
 
-Can I text you the link so you can take a look?
+(If yes, send the text, then:) If you like it, I'll make it yours, usually around \${{site_price}}. Honestly I'm paying off student loans, so I'm hungry for work. Text or call me back anytime at this number.`;
 
-(If yes: send the text, then:) If you like it, I can make it yours. Sites like that are usually around \${{site_price}} one-time. I also build custom tools to automate the manual stuff, like booking or order forms. No pressure at all, just text or call me back at this number.`;
+export const DEFAULT_SMS = `Hey, it's {{my_name}}, the web guy who just called (the one drowning in student loans). Here's the free site I made for {{business_name}}: {{preview_url}}
 
-export const DEFAULT_SMS = `Hi, it's {{my_name}}, the local web developer who just called. Here's the free sample site I made for {{business_name}}: {{preview_url}}
-
-No strings attached. Call or text me anytime if you'd like it!`;
+Text me anytime if you want it!`;
 
 export const DEFAULT_CATEGORIES = [
   "restaurant",
@@ -159,8 +152,20 @@ export const DEFAULTS: Record<string, string> = {
 
 export type Settings = typeof DEFAULTS;
 
+/** Bump when the default message wording changes: saved copies are replaced once. */
+const TEMPLATES_VERSION = "2";
+const TEMPLATE_KEYS = [
+  "email_subject", "email_body", "followup_subject", "followup_body", "postcard_message",
+  "email_subject_outdated", "email_body_outdated", "call_script", "call_script_outdated", "sms_message",
+];
+
 export async function getSettings(): Promise<Settings> {
-  const rows = await all<{ key: string; value: string }>("SELECT key, value FROM settings");
+  let rows = await all<{ key: string; value: string }>("SELECT key, value FROM settings");
+  if ((rows.find((r) => r.key === "templates_version")?.value || "1") !== TEMPLATES_VERSION) {
+    for (const k of TEMPLATE_KEYS) await run("DELETE FROM settings WHERE key = ?", [k]);
+    await setSetting("templates_version", TEMPLATES_VERSION);
+    rows = await all<{ key: string; value: string }>("SELECT key, value FROM settings");
+  }
   const s: Settings = { ...DEFAULTS };
   for (const r of rows) s[r.key] = r.value;
   return s;
