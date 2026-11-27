@@ -18,7 +18,7 @@ Reply here or call/text me at {{my_phone}}.
 
 {{my_name}}`;
 
-export const DEFAULT_FOLLOWUP_SUBJECT = "Re: {{business_name}}: I built you a website (for free, don't panic)";
+export const DEFAULT_FOLLOWUP_SUBJECT = "Re: your free website, {{business_name}}";
 
 export const DEFAULT_FOLLOWUP_BODY = `Hi again!
 
