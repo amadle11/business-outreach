@@ -6,14 +6,14 @@ export function unsubscribeUrl(b: Business) {
   return `${appUrl()}/u/${b.token}`;
 }
 
-/** CAN-SPAM footer: who you are, a physical address, and an opt-out. Always appended. */
+/** Footer appended to every email: intentionally empty. */
 export function complianceFooter(b: Business, s: Settings) {
-  const addr = mailingAddressText(s) || "[PO box address — set it in Settings]";
+  // Per Anthony: no address or unsubscribe text in the email body. Opt-outs come from the
+  // "reply and I'll stop" line (lib/inbox.ts) and Gmail's invisible List-Unsubscribe header.
+  const addr = "";
   return {
-    // Kept minimal: the opt-out is the "reply and I'll stop" line in the message itself (replies are
-    // detected in lib/inbox.ts), plus Gmail's one-click List-Unsubscribe header. The address is required.
-    text: `\n\n${addr}`,
-    html: `<p style="font-size:11px;color:#999;margin-top:20px">${escapeHtml(addr)}</p>`,
+    text: addr,
+    html: addr,
   };
 }
 

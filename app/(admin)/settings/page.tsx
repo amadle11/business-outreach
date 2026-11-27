@@ -48,18 +48,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <textarea name="shore_towns" rows={4} defaultValue={s.shore_towns} />
         </label>
         <label>Email shown on postcards (leave blank to use your Gmail) <input name="my_email" defaultValue={s.my_email} /></label>
-        <p className="muted small" style={{ margin: 0 }}>
-          <b>Email footer address.</b> Cold emails legally need a postal address in the footer (CAN-SPAM). Use a PO box or a
-          virtual mailbox, never your home. It appears only at the bottom of emails, never on postcards or sample sites.
-          Email sending stays paused until this is filled in. Postcards don&apos;t need it.
-        </p>
-        <label>PO box or mailbox address <input name="mailing_address_line1" defaultValue={s.mailing_address_line1} placeholder="PO Box 123" /></label>
-        <label>Address line 2 <input name="mailing_address_line2" defaultValue={s.mailing_address_line2} /></label>
-        <div className="row gap">
-          <label style={{ flex: 2 }}>City <input name="mailing_city" defaultValue={s.mailing_city} /></label>
-          <label style={{ width: 80 }}>State <input name="mailing_state" defaultValue={s.mailing_state} /></label>
-          <label style={{ width: 110 }}>ZIP <input name="mailing_zip" defaultValue={s.mailing_zip} /></label>
-        </div>
         <div className="row gap">
           <label style={{ flex: 1 }}>Site price ($) <input name="site_price" defaultValue={s.site_price} /></label>
           <label style={{ flex: 1 }}>Hosting per month ($) <input name="hosting_price" defaultValue={s.hosting_price} /></label>
@@ -76,7 +64,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           {PLACEHOLDERS.map(([k, d]) => (
             <code key={k} title={d}>{`{{${k}}}`} </code>
           ))}
-          . Your name, PO box and an unsubscribe link are added under every email automatically.
+          . Nothing else is added to the email.
         </p>
         <TemplateEditor
           initial={{

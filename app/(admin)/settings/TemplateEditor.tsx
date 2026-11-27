@@ -99,7 +99,6 @@ export default function TemplateEditor({
           )}
           <pre className="emailpre">
             {fill({ email: t.email_body, outdated: t.email_body_outdated, followup: t.followup_body, call: t.call_script, callOutdated: t.call_script_outdated, sms: t.sms_message, postcard: t.postcard_message }[tab], v)}
-            {(tab === "email" || tab === "outdated" || tab === "followup") && `\n\n--\n${settings.my_name} · [your PO box / virtual mailbox]\nNot interested? Reply "no thanks" or unsubscribe here and I won't email again: [link]`}
           </pre>
         </div>
       </div>

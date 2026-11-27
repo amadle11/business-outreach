@@ -224,8 +224,6 @@ export function setupProblems(s: Settings): { email: string[]; postcard: string[
   const leads: string[] = [];
   if (!process.env.GMAIL_ADDRESS || !process.env.GMAIL_APP_PASSWORD)
     email.push("Gmail address and app password are not set (GMAIL_ADDRESS, GMAIL_APP_PASSWORD)");
-  if (!s.mailing_address_line1 || !s.mailing_city || !s.mailing_zip)
-    email.push("Add a PO box or virtual mailbox address in Settings. The law (CAN-SPAM) requires one in the footer of cold emails, so email sending is paused until it's set");
   if (!s.my_phone) email.push("Your phone number is not set (Settings)");
   if (!process.env.LOB_API_KEY) postcard.push("Lob API key is not set (LOB_API_KEY)");
   if (!s.my_phone) postcard.push("Your phone number is not set (Settings)");
