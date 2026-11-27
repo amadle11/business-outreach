@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <div className="login">
       <form action={login} className="card">
-        <h1>Outreach</h1>
+        <h1>Anthony Builds</h1>
         <p className="muted">Log in to review leads.</p>
         <input type="hidden" name="next" value={sp.next || "/"} />
         <input type="password" name="password" placeholder="Password" autoFocus required />

@@ -42,7 +42,7 @@ export default function Nav({ counts, live }: { counts: { review: number; replie
     <aside className="side">
       <Link href="/" className="brand">
         <span className="mark">A</span>
-        <span>Outreach</span>
+        <span>Anthony Builds</span>
       </Link>
       <nav>
         {items.map((it) => (

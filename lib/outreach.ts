@@ -31,7 +31,12 @@ export function composeEmail(b: Business, s: Settings, kind: "first" | "followup
     `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222;max-width:600px">` +
     body
       .split(/\n{2,}/)
-      .map((p) => `<p style="margin:0 0 14px">${linkify(escapeHtml(p)).replace(/\n/g, "<br>")}</p>`)
+      .map((p) => {
+        // A paragraph that is just the sample link shows as a plain text link instead of a raw URL.
+        if (p.trim() === v.preview_url)
+          return `<p style="margin:0 0 18px"><a href="${v.preview_url}" style="font-weight:bold;color:#1a56db">See your new website &rarr;</a></p>`;
+        return `<p style="margin:0 0 14px">${linkify(escapeHtml(p)).replace(/\n/g, "<br>")}</p>`;
+      })
       .join("") +
     footer.html +
     `</div>`;
