@@ -1,5 +1,12 @@
 import { parseJson, type Business } from "./types";
-import { appUrl, type Settings } from "./settings";
+import { appUrl, lines, type Settings } from "./settings";
+
+/** "I live in Nutley" or the shore version, depending on where the business is. */
+export function localLine(b: Pick<Business, "city" | "address">, s: Settings) {
+  const where = `${b.city || ""} ${b.address || ""}`.toLowerCase();
+  const shore = lines(s.shore_towns || "").some((t) => where.includes(t.replace(/,.*$/, "").toLowerCase()));
+  return shore ? s.my_area_shore : s.my_area;
+}
 
 export function previewUrl(b: Pick<Business, "slug">, source?: string) {
   return `${appUrl()}/p/${b.slug}${source ? `?src=${source}` : ""}`;
@@ -14,6 +21,7 @@ export function vars(b: Business, s: Settings, source = "email"): Record<string,
     my_name: s.my_name,
     my_phone: s.my_phone,
     my_area: s.my_area,
+    local: localLine(b, s),
     my_email: s.my_email || process.env.GMAIL_ADDRESS || "",
     site_price: s.site_price,
     hosting_price: s.hosting_price,
@@ -38,6 +46,7 @@ export const PLACEHOLDERS = [
   ["my_phone", "Your phone (Settings)"],
   ["my_email", "Your email (Settings, or your Gmail)"],
   ["my_area", "Where you're from (Settings)"],
+  ["local", "Your local line, picked by the business's town (Settings)"],
   ["site_price", "Site price (Settings)"],
   ["hosting_price", "Monthly hosting price (Settings)"],
   ["current_site", "Their current website (outdated-site leads)"],

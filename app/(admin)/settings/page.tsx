@@ -39,8 +39,14 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         <div className="row gap">
           <label style={{ flex: 1 }}>Your name <input name="my_name" defaultValue={s.my_name} /></label>
           <label style={{ flex: 1 }}>Your phone <input name="my_phone" defaultValue={s.my_phone} placeholder="(609) 555-1234" /></label>
-          <label style={{ flex: 1 }}>Where you&apos;re from <input name="my_area" defaultValue={s.my_area} /></label>
         </div>
+        <div className="row gap">
+          <label style={{ flex: 1 }}>Your local line (most towns) <input name="my_area" defaultValue={s.my_area} /></label>
+          <label style={{ flex: 1 }}>Your local line (shore towns) <input name="my_area_shore" defaultValue={s.my_area_shore} /></label>
+        </div>
+        <label>Shore towns (one per line; businesses here get the shore line)
+          <textarea name="shore_towns" rows={4} defaultValue={s.shore_towns} />
+        </label>
         <label>Email shown on postcards (leave blank to use your Gmail) <input name="my_email" defaultValue={s.my_email} /></label>
         <p className="muted small" style={{ margin: 0 }}>
           <b>Email footer address.</b> Cold emails legally need a postal address in the footer (CAN-SPAM). Use a PO box or a

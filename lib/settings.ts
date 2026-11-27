@@ -4,7 +4,7 @@ export const DEFAULT_EMAIL_SUBJECT = "{{business_name}}: I built you a website (
 
 export const DEFAULT_EMAIL_BODY = `Hi {{business_name}} team,
 
-I'm {{my_name}}. I build web apps that help small businesses run smoother, and I take on side projects to chip away at my student loans. So I'm hungry for work. Starving, actually. Genuinely just a fella trying to figure out life and doing my best.
+I'm {{my_name}}, and I'm local: {{local}}. I build web apps that help small businesses run smoother, and I take on side projects to chip away at my student loans. So I'm hungry for work. Starving, actually. Genuinely just a fella trying to figure out life and doing my best.
 
 I couldn't find a website for {{business_name}}, so I started one for you:
 
@@ -35,7 +35,7 @@ If it's not for you, just reply "no thanks" and I'll stop bugging you, promise. 
 
 export const DEFAULT_POSTCARD_MESSAGE = `Hi {{business_name}}!
 
-I'm {{my_name}}. I build websites and web apps for local businesses, and I'm paying off student loans, so I'm hungry for work.
+I'm {{my_name}}, and I'm local: {{local}}. I build websites and web apps for local businesses, and I'm paying off student loans, so I'm hungry for work.
 
 I built you a free sample website. Scan the code to see it. No strings.
 
@@ -48,7 +48,7 @@ export const DEFAULT_OUTDATED_SUBJECT = "{{business_name}}: I redid your website
 
 export const DEFAULT_OUTDATED_BODY = `Hi {{business_name}} team,
 
-I'm {{my_name}}. I build web apps that help small businesses run smoother, and I take on side projects to chip away at my student loans. So I'm hungry for work. Starving, actually. Genuinely just a fella trying to figure out life and doing my best.
+I'm {{my_name}}, and I'm local: {{local}}. I build web apps that help small businesses run smoother, and I take on side projects to chip away at my student loans. So I'm hungry for work. Starving, actually. Genuinely just a fella trying to figure out life and doing my best.
 
 I checked out {{current_site}} and spotted a few things that might be costing you customers:
 {{site_issues}}
@@ -68,7 +68,7 @@ Happy to talk anytime. Just reply here or call/text me at {{my_phone}}.
 {{my_name}}
 {{my_phone}}`;
 
-export const DEFAULT_OUTDATED_CALL_SCRIPT = `Hi, is this the owner? I'm {{my_name}}, I build websites and web apps for local businesses. Quick 30 seconds, I promise.
+export const DEFAULT_OUTDATED_CALL_SCRIPT = `Hi, is this the owner? I'm {{my_name}}, I build websites and web apps for local businesses. I'm local myself, {{local}}. Quick 30 seconds, I promise.
 
 I was on {{business_name}}'s website and noticed a couple things that might be losing you customers:
 {{site_issues}}
@@ -77,7 +77,7 @@ So I built you a free redesign. Can I text you the link?
 
 (If yes, send the text, then:) If you like it, I'll swap it in on your current web address, usually around \${{site_price}}. And honestly, where I really shine is custom tools that automate the repetitive parts of a business, so if anything like that eats your time, I'd love to hear about it. Text or call me back anytime at this number.`;
 
-export const DEFAULT_CALL_SCRIPT = `Hi, is this the owner? I'm {{my_name}}, I build websites and web apps for local businesses. Quick 30 seconds, I promise.
+export const DEFAULT_CALL_SCRIPT = `Hi, is this the owner? I'm {{my_name}}, I build websites and web apps for local businesses. I'm local myself, {{local}}. Quick 30 seconds, I promise.
 
 I couldn't find a website for {{business_name}}, so I built you one for free. Can I text you the link?
 
@@ -86,6 +86,8 @@ I couldn't find a website for {{business_name}}, so I built you one for free. Ca
 export const DEFAULT_SMS = `Hey, it's {{my_name}}, the web guy who just called (the one drowning in student loans). Here's the free site I made for {{business_name}}: {{preview_url}}
 
 Text me anytime if you want it, or if there's a tool that would make running the business easier!`;
+
+export const SHORE_TOWNS = "Wildwood\nNorth Wildwood\nWildwood Crest\nRio Grande\nCape May\nCape May Court House\nStone Harbor\nAvalon\nSea Isle City\nOcean City\nSomers Point\nLinwood\nNorthfield\nEgg Harbor Township\nMargate City\nVentnor City";
 
 export const DEFAULT_CATEGORIES = [
   "restaurant",
@@ -117,7 +119,10 @@ export const DEFAULT_CATEGORIES = [
 export const DEFAULTS: Record<string, string> = {
   my_name: "Anthony",
   my_phone: "",
-  my_area: "New Jersey",
+  // {{local}} in messages: the shore line for businesses in shore_towns, otherwise my_area.
+  my_area: "I live in Nutley",
+  my_area_shore: "I grew up in Wildwood and my mom's in Somers Point",
+  shore_towns: SHORE_TOWNS,
   my_email: "",
   mailing_address_line1: "",
   mailing_address_line2: "",
@@ -126,7 +131,7 @@ export const DEFAULTS: Record<string, string> = {
   mailing_zip: "",
   site_price: "600",
   hosting_price: "25",
-  towns: "Somers Point, NJ\nWildwood, NJ\nNutley, NJ",
+  towns: "Nutley, NJ\nWildwood, NJ\nRutherford, NJ\nNorth Wildwood, NJ\nLyndhurst, NJ\nWildwood Crest, NJ\nNorth Arlington, NJ\nRio Grande, NJ\nKearny, NJ\nCape May, NJ\nBelleville, NJ\nCape May Court House, NJ\nBloomfield, NJ\nStone Harbor, NJ\nGlen Ridge, NJ\nAvalon, NJ\nMontclair, NJ\nSea Isle City, NJ\nClifton, NJ\nOcean City, NJ\nEast Rutherford, NJ\nSomers Point, NJ\nCarlstadt, NJ\nLinwood, NJ\nLodi, NJ\nNorthfield, NJ\nPassaic, NJ\nEgg Harbor Township, NJ\nHackensack, NJ\nMargate City, NJ\nVentnor City, NJ",
   categories: DEFAULT_CATEGORIES.join("\n"),
   weekly_lead_cap: "30",
   live_sending: "0",
@@ -159,7 +164,7 @@ export const DEFAULTS: Record<string, string> = {
 export type Settings = typeof DEFAULTS;
 
 /** Bump when the default message wording changes: saved copies are replaced once. */
-const TEMPLATES_VERSION = "4";
+const TEMPLATES_VERSION = "5";
 const TEMPLATE_KEYS = [
   "email_subject", "email_body", "followup_subject", "followup_body", "postcard_message",
   "email_subject_outdated", "email_body_outdated", "call_script", "call_script_outdated", "sms_message",
@@ -169,6 +174,12 @@ export async function getSettings(): Promise<Settings> {
   let rows = await all<{ key: string; value: string }>("SELECT key, value FROM settings");
   if ((rows.find((r) => r.key === "templates_version")?.value || "1") !== TEMPLATES_VERSION) {
     for (const k of TEMPLATE_KEYS) await run("DELETE FROM settings WHERE key = ?", [k]);
+    // Old defaults that were replaced: drop them so the new ones apply (anything you edited stays).
+    await run("DELETE FROM settings WHERE key = 'my_area' AND value = 'New Jersey'");
+    await run("DELETE FROM settings WHERE key = 'towns' AND value IN (?, ?)", [
+      "Somers Point, NJ\nWildwood, NJ\nNutley, NJ",
+      "Somers Point, NJ\r\nWildwood, NJ\r\nNutley, NJ",
+    ]);
     await setSetting("templates_version", TEMPLATES_VERSION);
     rows = await all<{ key: string; value: string }>("SELECT key, value FROM settings");
   }
