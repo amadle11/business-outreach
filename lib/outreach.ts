@@ -10,8 +10,10 @@ export function unsubscribeUrl(b: Business) {
 export function complianceFooter(b: Business, s: Settings) {
   const addr = mailingAddressText(s) || "[PO box address — set it in Settings]";
   return {
-    text: `\n\n--\n${s.my_name} · ${addr}\nNot interested? Reply "no thanks" or unsubscribe here and I won't email again: ${unsubscribeUrl(b)}`,
-    html: `<hr style="border:none;border-top:1px solid #ddd;margin:24px 0 12px"><p style="font-size:12px;color:#777;line-height:1.5">${escapeHtml(s.my_name)} · ${escapeHtml(addr)}<br>Not interested? Reply "no thanks" or <a href="${unsubscribeUrl(b)}" style="color:#777">unsubscribe here</a> and I won't email again.</p>`,
+    // Kept minimal: the opt-out is the "reply and I'll stop" line in the message itself (replies are
+    // detected in lib/inbox.ts), plus Gmail's one-click List-Unsubscribe header. The address is required.
+    text: `\n\n${addr}`,
+    html: `<p style="font-size:11px;color:#999;margin-top:20px">${escapeHtml(addr)}</p>`,
   };
 }
 

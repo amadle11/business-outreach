@@ -4,19 +4,22 @@ export const DEFAULT_EMAIL_SUBJECT = "{{business_name}}: I built you a website (
 
 export const DEFAULT_EMAIL_BODY = `Hi {{business_name}} team,
 
-I'm {{my_name}}. I build web apps that help small businesses run smoother, and I take on side projects to chip away at my student loans. So I'm hungry for work. Starving, actually.
+I'm {{my_name}}. I build web apps that help small businesses run smoother, and I take on side projects to chip away at my student loans. So I'm hungry for work. Starving, actually. Genuinely just a fella trying to figure out life and doing my best.
 
-I couldn't find a website for {{business_name}}, so I built you one. Free, no strings:
+I couldn't find a website for {{business_name}}, so I started one for you:
 
 {{preview_url}}
 
-If you like it, I'll make it yours on your own domain for \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates. If not, no worries at all.
+It's not perfect yet, and I'd want your feedback and guidance on it. But I wanted to show you I'm serious about this kind of work, and I'll keep at it until you're fully satisfied. If you like where it's going, I'll make it yours on your own domain for \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates.
 
-Full transparency: web design is the fun part for me, but where I really thrive is building custom tools that streamline and automate parts of your business. Think connecting your data so nothing gets entered twice, dashboards that show how things are going at a glance, and automating the repetitive stuff, all saving you time and money. If that kind of work is interesting, let me know.
+Full transparency: web design is the fun part for me, but where I really thrive is building custom tools that streamline and automate parts of your business. Think connecting your data so nothing gets entered twice, dashboards that show how things are going at a glance, and automating the repetitive stuff, all saving you time and money. If that kind of work is interesting, let me know, and we can really start working together and build a partnership.
+
+And if you're not interested, I'd really appreciate a quick reply so I don't keep bothering you. Like I said, I'm hungry right now, and I'll spare you from me being too annoying. My girlfriend already tells me that enough.
 
 Happy to talk anytime. Just reply here or call/text me at {{my_phone}}.
 
-{{my_name}}`;
+{{my_name}}
+{{my_phone}}`;
 
 export const DEFAULT_FOLLOWUP_SUBJECT = "Re: your free website, {{business_name}}";
 
@@ -26,7 +29,7 @@ Bumping this in case it got buried. Your free sample is still up:
 
 {{preview_url}}
 
-If now's not the time, totally fine. If it is, or if a custom tool for your business sounds useful, reply here or text me at {{my_phone}}.
+If it's not for you, just reply "no thanks" and I'll stop bugging you, promise. If it is, or if a custom tool for your business sounds useful, reply here or call/text me at {{my_phone}}.
 
 {{my_name}}`;
 
@@ -45,22 +48,25 @@ export const DEFAULT_OUTDATED_SUBJECT = "{{business_name}}: I redid your website
 
 export const DEFAULT_OUTDATED_BODY = `Hi {{business_name}} team,
 
-I'm {{my_name}}. I build web apps that help small businesses run smoother, and I take on side projects to chip away at my student loans. So I'm hungry for work. Starving, actually.
+I'm {{my_name}}. I build web apps that help small businesses run smoother, and I take on side projects to chip away at my student loans. So I'm hungry for work. Starving, actually. Genuinely just a fella trying to figure out life and doing my best.
 
 I checked out {{current_site}} and spotted a few things that might be costing you customers:
 {{site_issues}}
 
-So I built you a free, phone-friendly redesign:
+So I started a new, phone-friendly website for you:
 
 {{preview_url}}
 
-If you like it, I'll put it on your domain for \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates. If not, no worries at all.
+It's not perfect yet, and I'd want your feedback and guidance on it. But I wanted to show you I'm serious about this kind of work, and I'll keep at it until you're fully satisfied. If you like where it's going, I'll put it on your domain for \${{site_price}} one-time, plus \${{hosting_price}}/month for hosting and updates.
 
-Full transparency: web design is the fun part for me, but where I really thrive is building custom tools that streamline and automate parts of your business. Think connecting your data so nothing gets entered twice, dashboards that show how things are going at a glance, and automating the repetitive stuff, all saving you time and money. If that kind of work is interesting, let me know.
+Full transparency: web design is the fun part for me, but where I really thrive is building custom tools that streamline and automate parts of your business. Think connecting your data so nothing gets entered twice, dashboards that show how things are going at a glance, and automating the repetitive stuff, all saving you time and money. If that kind of work is interesting, let me know, and we can really start working together and build a partnership.
+
+And if you're not interested, I'd really appreciate a quick reply so I don't keep bothering you. Like I said, I'm hungry right now, and I'll spare you from me being too annoying. My girlfriend already tells me that enough.
 
 Happy to talk anytime. Just reply here or call/text me at {{my_phone}}.
 
-{{my_name}}`;
+{{my_name}}
+{{my_phone}}`;
 
 export const DEFAULT_OUTDATED_CALL_SCRIPT = `Hi, is this the owner? I'm {{my_name}}, I build websites and web apps for local businesses. Quick 30 seconds, I promise.
 
@@ -153,7 +159,7 @@ export const DEFAULTS: Record<string, string> = {
 export type Settings = typeof DEFAULTS;
 
 /** Bump when the default message wording changes: saved copies are replaced once. */
-const TEMPLATES_VERSION = "3";
+const TEMPLATES_VERSION = "4";
 const TEMPLATE_KEYS = [
   "email_subject", "email_body", "followup_subject", "followup_body", "postcard_message",
   "email_subject_outdated", "email_body_outdated", "call_script", "call_script_outdated", "sms_message",

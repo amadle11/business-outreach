@@ -71,7 +71,7 @@ export async function checkInbox(): Promise<InboxResult> {
         }
         const parsed = await simpleParser(msg.source);
         const snippet = cleanSnippet(parsed.text || "");
-        const optOut = /\b(unsubscribe|stop|remove me|not interested|no thanks)\b/i.test(snippet.slice(0, 120));
+        const optOut = /\b(unsubscribe|stop|remove me|not interested|no thanks|no thank you|not for us|no interest|please don.t (email|contact))\b/i.test(snippet.slice(0, 120));
         await run(
           `UPDATE businesses SET needs_response=1, last_reply_at=?, last_reply_snippet=?,
              status=CASE WHEN status='contacted' THEN 'replied' ELSE status END, updated_at=datetime('now') WHERE id=?`,
