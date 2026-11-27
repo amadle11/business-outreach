@@ -34,6 +34,7 @@ export default async function Dashboard() {
     "SELECT e.*, b.name FROM events e LEFT JOIN businesses b ON b.id=e.business_id WHERE e.type NOT IN ('found','edit') ORDER BY e.id DESC LIMIT 25",
   );
   const lob = lobMode();
+  const pc = s.outreach_mode === "postcard";
 
   return (
     <div className="stack">
@@ -46,17 +47,17 @@ export default async function Dashboard() {
         <Link href="/tracker?status=won" className="stat"><b>{st.won}</b><span>won{st.revenue ? ` · $${st.revenue}` : ""}</span></Link>
       </div>
 
-      {(probs.email.length > 0 || probs.postcard.length > 0 || probs.leads.length > 0 || s.live_sending !== "1" || lob === "test") && (
+      {(probs.email.length > 0 || (pc && probs.postcard.length > 0) || probs.leads.length > 0 || s.live_sending !== "1" || (pc && lob === "test")) && (
         <div className="card warn">
           <h3>Setup checklist</h3>
           <ul>
             {probs.leads.map((p) => <li key={p}>Lead search: {p}</li>)}
             {probs.email.map((p) => <li key={p}>Email: {p}</li>)}
-            {probs.postcard.map((p) => <li key={p}>Postcards: {p}</li>)}
-            {lob === "test" && <li>Postcards: your Lob key is a test key, so cards are created but never mailed.</li>}
+            {pc && probs.postcard.map((p) => <li key={p}>Postcards: {p}</li>)}
+            {pc && lob === "test" && <li>Postcards: your Lob key is a test key, so cards are created but never mailed.</li>}
             {s.live_sending !== "1" && (
               <li>
-                Test mode is on, so real businesses won&apos;t be contacted. Emails go to you instead. Turn on live sending in{" "}
+                Practice mode is on: every email goes to you, not the business, so you can see exactly what they&apos;d get. Turn on Live in{" "}
                 <Link href="/settings#sending">Settings</Link> when you&apos;re ready.
               </li>
             )}
@@ -72,7 +73,7 @@ export default async function Dashboard() {
 
       <div className="grid2">
         <div className="card">
-          <h3>💬 Needs your response ({needs.length})</h3>
+          <h3>Needs your response ({needs.length})</h3>
           {needs.length === 0 && <p className="muted">No replies waiting. Replies in Gmail show up here automatically.</p>}
           {needs.map((b) => (
             <div key={b.id} className="item">
@@ -89,7 +90,7 @@ export default async function Dashboard() {
           ))}
         </div>
         <div className="card">
-          <h3>📞 Follow-ups due ({due.length})</h3>
+          <h3>Follow-ups due ({due.length})</h3>
           {due.length === 0 && <p className="muted">Nothing due. Postcard leads get a &quot;give them a call&quot; reminder 10 days after mailing.</p>}
           {due.map((b) => (
             <div key={b.id} className="item">
@@ -110,7 +111,7 @@ export default async function Dashboard() {
 
       {hot.length > 0 && (
         <div className="card">
-          <h3>🔥 Looked at their site but haven&apos;t replied</h3>
+          <h3>Looked at their site but haven&apos;t replied</h3>
           {hot.map((b) => (
             <div key={b.id} className="item">
               <Link href={`/leads/${b.id}`}><b>{b.name}</b></Link>

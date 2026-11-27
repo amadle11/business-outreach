@@ -94,7 +94,7 @@ export default function ReviewBoard({
           <p className="muted small" style={{ margin: "4px 0 0" }}>
             {live
               ? `Live mode: this sends real emails${lob === "live" ? " and mails real postcards (about $1 each)" : ""}.`
-              : "Test mode: no business is contacted. Each email is sent to you instead so you can see it."}
+              : "Practice mode: each email goes to you instead of the business."}
             {blockers.email.length > 0 && counts.email > 0 && ` Email isn't set up yet: ${blockers.email[0]}.`}
             {blockers.postcard.length > 0 && counts.postcard > 0 && ` Postcards aren't set up yet: ${blockers.postcard[0]}.`}
           </p>

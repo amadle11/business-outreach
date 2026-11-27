@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { one } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
+import Nav, { PageTitle } from "@/components/Nav";
 
 export const dynamic = "force-dynamic";
 
@@ -13,20 +13,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   );
   return (
     <div className="admin">
-      <header className="top">
-        <Link href="/" className="brand">Outreach</Link>
-        <nav>
-          <Link href="/">Dashboard{c?.replies ? <span className="pill red">{c.replies}</span> : null}</Link>
-          <Link href="/review">Review{c?.review ? <span className="pill">{c.review}</span> : null}</Link>
-          <Link href="/calls">Calls{c?.calls ? <span className="pill">{c.calls}</span> : null}</Link>
-          <Link href="/tracker">Tracker</Link>
-          <Link href="/settings">Settings</Link>
-        </nav>
-        <span className={s.live_sending === "1" ? "mode live" : "mode test"}>
-          {s.live_sending === "1" ? "LIVE sending" : "Test mode"}
-        </span>
-      </header>
-      <main>{children}</main>
+      <Nav counts={{ review: c?.review ?? 0, replies: c?.replies ?? 0, calls: c?.calls ?? 0 }} live={s.live_sending === "1"} />
+      <main>
+        <PageTitle />
+        {children}
+      </main>
     </div>
   );
 }

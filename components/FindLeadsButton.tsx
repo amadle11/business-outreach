@@ -27,7 +27,7 @@ export default function FindLeadsButton() {
   }
   return (
     <span className="action">
-      <button className="btn" disabled={busy} onClick={go}>{busy ? "Searching…" : "Find leads now"}</button>
+      <button className="btn primary" disabled={busy} onClick={go}>{busy ? "Searching…" : "Find leads now"}</button>
       {msg && <span className="muted small"> {msg}</span>}
     </span>
   );

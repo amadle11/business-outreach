@@ -25,11 +25,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
     <div className="stack narrow">
       <div className="card">
         <h3>Connections</h3>
-        <ul className="plain">
+        <div className="conns">
           {env.map(([label, ok]) => (
-            <li key={label}>{ok ? "✅" : "⬜️"} {label}</li>
+            <span key={label} className={ok ? "conn ok" : "conn"}><i />{label}</span>
           ))}
-        </ul>
+        </div>
         <p className="muted small">These are set as environment variables where the app is hosted (see README).</p>
       </div>
 
@@ -146,7 +146,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         <label className="row gap check">
           <input type="checkbox" name="live_sending" defaultChecked={s.live_sending === "1"} />
           <span>
-            <b>Live sending.</b> When off (test mode), no business is contacted: emails are sent to you instead and postcards are skipped.
+            <b>Live.</b> When off (practice mode), no business is contacted: every email comes to you instead, and postcards are skipped. Lead search runs either way.
           </span>
         </label>
         {s.live_sending !== "1" && (probs.email.length > 0 || probs.postcard.length > 0) && (
